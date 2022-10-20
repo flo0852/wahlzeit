@@ -76,6 +76,11 @@ public class Photo extends DataObject {
 	/**
 	 * 
 	 */
+	public Location location;
+
+	/**
+	 * 
+	 */
 	protected PhotoStatus status = PhotoStatus.VISIBLE;
 	
 	/**
