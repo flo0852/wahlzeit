@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
-
+import java.sql.ResultSet;
 import org.junit.Test;
 
 
@@ -28,7 +28,15 @@ public class LocationTest {
     @Test
     public void testLocation() throws SQLException{
         try {
-            Location testnullloc = new Location(null);
+            ResultSet rs = null;
+            Location testnullloc = new Location(rs);
+            fail("null isn't regcognized");
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+        try {
+            Coordinate c = null;
+            Location testnullloc = new Location(c);
             fail("null isn't regcognized");
         } catch (IllegalArgumentException e) {
             assertTrue(true);

@@ -42,7 +42,7 @@ public class Coordinate {
     @Override
     public boolean equals(Object o){
         if(o == null){
-            throw new IllegalArgumentException("Given Coordinate is null");
+            return false;
         }
         if(o.getClass() == getClass()){
             return isEqual((Coordinate) o);

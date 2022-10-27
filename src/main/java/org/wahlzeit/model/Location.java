@@ -3,6 +3,8 @@ package org.wahlzeit.model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
 
 import org.wahlzeit.services.DataObject;
 import org.wahlzeit.services.DatabaseConnection;
@@ -15,10 +17,13 @@ public class Location extends DataObject{
     private int id;
 
     public Location(Coordinate c) throws SQLException{
+        if (c == null) {
+            throw new IllegalArgumentException("Given Coordinate is null");
+        }
+        DatabaseConnection dbcon = SessionManager.getDatabaseConnection();
+            Connection con = dbcon.getRdbmsConnection();
         if(current_id == -1){   //hoechste ID aus DB holen und auf current_id setzen, falls keine Eintraege vorhanden => currend id = 0
-            DatabaseConnection dbcon = SessionManager.getDatabaseConnection();
-            java.sql.Connection con = dbcon.getRdbmsConnection();
-            java.sql.Statement st = con.createStatement();
+            Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT MAX(location_id) FROM location");
             current_id = 0;
             if(rs.next()){
@@ -26,19 +31,20 @@ public class Location extends DataObject{
             }
         }
 
-        if (c == null) {
-            throw new IllegalArgumentException("Given Coordinate is null");
-        }
         id = ++current_id;
         cord = c;
+        Statement st2 = con.createStatement();
+        ResultSet rs2 = st2.executeQuery("SELECT * FROM location");
+        rs2.moveToInsertRow();
+        insertData(rs2);
     }
     
     //alternative Constructor
     public Location(double cx, double cy, double cz) throws SQLException{
+        DatabaseConnection dbcon = SessionManager.getDatabaseConnection();
+        Connection con = dbcon.getRdbmsConnection();
         if(current_id == -1){   //hoechste ID aus DB holen und auf current_id setzen, falls keine Eintraege vorhanden => currend id = 0
-            DatabaseConnection dbcon = SessionManager.getDatabaseConnection();
-            java.sql.Connection con = dbcon.getRdbmsConnection();
-            java.sql.Statement st = con.createStatement();
+            Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT MAX(location_id) FROM location");
             current_id = 0;
             if(rs.next()){
@@ -47,10 +53,17 @@ public class Location extends DataObject{
         }
         id = ++current_id;
         cord = new Coordinate(cx, cy, cz);
+        Statement st2 = con.createStatement();
+        ResultSet rs2 = st2.executeQuery("SELECT * FROM location");
+        rs2.moveToInsertRow();
+        insertData(rs2);
     }
 
     //Constructor for ResultSet
     public Location(ResultSet rset) throws SQLException{
+        if (rset == null) {
+            throw new IllegalArgumentException("Given Coordinate is null");
+        }
         readFrom(rset);
     }
 
@@ -65,8 +78,8 @@ public class Location extends DataObject{
             throw new IllegalArgumentException("Given Coordinate is null");
         }
         DatabaseConnection dbcon = SessionManager.getDatabaseConnection();
-        java.sql.Connection con = dbcon.getRdbmsConnection();
-        java.sql.Statement st = con.createStatement();
+        Connection con = dbcon.getRdbmsConnection();
+        Statement st = con.createStatement();
         String sqlInquiry = "SELECT * FROM location WHERE location_id = ";
         sqlInquiry = sqlInquiry + getIdAsString();
         ResultSet rs = st.executeQuery(sqlInquiry);
@@ -91,13 +104,21 @@ public class Location extends DataObject{
     }
 
     @Override
-    public void writeOn(ResultSet rset) throws SQLException {
+    public void writeOn(ResultSet rset) throws SQLException { //update Row
         rset.updateInt("location_id", id);
         rset.updateDouble("x_coordinate", cord.getCoordinates()[0]);
         rset.updateDouble("y_coordinate", cord.getCoordinates()[1]);
         rset.updateDouble("z_coordinate", cord.getCoordinates()[2]);
         rset.updateRow();
         
+    }
+
+    public void insertData(ResultSet rset) throws SQLException{ //insert Row
+        rset.updateInt("location_id", id);
+        rset.updateDouble("x_coordinate", cord.getCoordinates()[0]);
+        rset.updateDouble("y_coordinate", cord.getCoordinates()[1]);
+        rset.updateDouble("z_coordinate", cord.getCoordinates()[2]);
+        rset.insertRow();
     }
 
     @Override
