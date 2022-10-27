@@ -23,6 +23,12 @@ public class Coordinate {
         return ret;
     }
 
+    public void setCoordinates(double cx, double cy, double cz){
+        x = cx;
+        y = cy;
+        z = cz;
+    }
+
     public double getDistance(Coordinate c) {
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
@@ -33,7 +39,19 @@ public class Coordinate {
         return dist;
     }
 
-    public boolean equals(Coordinate c) {
+    @Override
+    public boolean equals(Object o){
+        if(o == null){
+            throw new IllegalArgumentException("Given Coordinate is null");
+        }
+        if(o.getClass() == getClass()){
+            return isEqual((Coordinate) o);
+        }
+        else{
+            return false;
+        }
+    }
+    public boolean isEqual(Coordinate c) {
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
         }

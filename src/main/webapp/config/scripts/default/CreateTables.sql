@@ -29,7 +29,8 @@ CREATE TABLE photos (
 	status integer,
 	praise_sum integer,
 	no_votes integer,
-	creation_time bigint
+	creation_time bigint,
+	location_id integer REFERENCES location(location_id)
 );
 
 CREATE TABLE tags (
@@ -54,6 +55,14 @@ CREATE TABLE globals (
 	last_photo_id integer,
 	last_case_id integer,
 	last_session_id integer
+);
+
+CREATE TABLE location (
+	location_id integer PRIMARY KEY,
+	x_coordinate double precision,
+	y_coordinate double precision,
+	z_coordinate double precision
+
 );
 
 INSERT INTO globals (id, last_user_id, last_photo_id, last_case_id, last_session_id)

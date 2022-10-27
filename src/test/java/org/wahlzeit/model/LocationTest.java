@@ -6,6 +6,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 
@@ -24,7 +26,7 @@ public class LocationTest {
         assertArrayEquals(exp, testco.getCoordinates(), tolerance);
     }
     @Test
-    public void testLocation(){
+    public void testLocation() throws SQLException{
         try {
             Location testnullloc = new Location(null);
             fail("null isn't regcognized");
@@ -62,7 +64,7 @@ public class LocationTest {
     }
 
     @Test
-    public void testPhotoLocation(){ 
+    public void testPhotoLocation() throws SQLException{ 
         Coordinate testco = new Coordinate(-1.0, -231.0, 8.1);
         Location testloc = new Location(testco);
         Photo testphoto = new Photo();
