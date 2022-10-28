@@ -1,14 +1,11 @@
 package org.wahlzeit.model;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
 
-import org.wahlzeit.services.DataObject;
 import org.wahlzeit.services.DatabaseConnection;
-import org.wahlzeit.services.SessionManager;
 import org.wahlzeit.services.ObjectManager;
 import org.wahlzeit.services.Persistent;
 
@@ -37,7 +34,16 @@ public class LocationManager extends ObjectManager{
         return ++current_id;
     }
 
+    protected Location getLocationFromID(int id) throws SQLException{
+        Statement st = getStatement();
+        String sqlInquiry = "SELECT * FROM location WHERE location_id = ";
+        sqlInquiry = sqlInquiry + String.valueOf(id);
+        ResultSet rs = st.executeQuery(sqlInquiry);
+        rs.absolute(1); 
+        return new Location(rs);
+    }
 
+    //Insert new Row in Location
     protected int insertData(Coordinate c) throws SQLException{
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
@@ -49,9 +55,9 @@ public class LocationManager extends ObjectManager{
         ResultSet rs = st.executeQuery("SELECT * FROM location");
         rs.moveToInsertRow();
         rs.updateInt("location_id", id);
-        rs.updateDouble("x_coordinate", c.getCoordinates()[0]);
-        rs.updateDouble("y_coordinate", c.getCoordinates()[1]);
-        rs.updateDouble("z_coordinate", c.getCoordinates()[2]);
+        rs.updateDouble("x_coordinate", c.getXCoordinate());
+        rs.updateDouble("y_coordinate", c.getYCoordinate());
+        rs.updateDouble("z_coordinate", c.getZCoordinate());
         rs.insertRow();
         return id;
     }
