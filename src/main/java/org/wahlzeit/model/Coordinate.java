@@ -14,13 +14,16 @@ public class Coordinate {
         z = cz;
     }
 
-    public double[] getCoordinates() { // nachreichen warum return Array => selten nur eine Koordinate benötigt =>
-                                       // meist alle 3, wenn einzeln, dann mehr methodenafurufe
-        double[] ret = new double[3];
-        ret[0] = x;
-        ret[1] = y;
-        ret[2] = z;
-        return ret;
+    public double getXCoordinate(){
+        return x;
+    }
+
+    public double getYCoordinate(){
+        return y;
+    }
+
+    public double getZCoordinate(){
+        return z;
     }
 
     public void setCoordinates(double cx, double cy, double cz){
@@ -33,7 +36,11 @@ public class Coordinate {
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
         }
-        double[] c1val = c.getCoordinates();
+        double[] c1val = new double[3];
+        c1val[0] = c.getXCoordinate();
+        c1val[1] = c.getYCoordinate();
+        c1val[2] = c.getZCoordinate();
+
         double dist = Math
                 .sqrt(Math.pow(c1val[0] - x, 2.0) + Math.pow(c1val[1] - y, 2.0) + Math.pow(c1val[2] - z, 2.0));
         return dist;
@@ -55,7 +62,7 @@ public class Coordinate {
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
         }
-        if (c.x == x && c.y == y && c.z == z) {
+        if (c.getXCoordinate() == x && c.getYCoordinate() == y && c.getZCoordinate() == z) {
             return true;
         }
         return false;

@@ -3,12 +3,9 @@ package org.wahlzeit.model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Connection;
 import java.sql.Statement;
 
 import org.wahlzeit.services.DataObject;
-import org.wahlzeit.services.DatabaseConnection;
-import org.wahlzeit.services.SessionManager;
 
 public class Location extends DataObject{
 
@@ -35,6 +32,10 @@ public class Location extends DataObject{
             throw new IllegalArgumentException("Given Coordinate is null");
         }
         readFrom(rset);
+    }
+
+    public int getID(){
+        return id;
     }
 
     //Getter for cord
@@ -74,9 +75,9 @@ public class Location extends DataObject{
     @Override
     public void writeOn(ResultSet rset) throws SQLException { //update Row
         rset.updateInt("location_id", id);
-        rset.updateDouble("x_coordinate", cord.getCoordinates()[0]);
-        rset.updateDouble("y_coordinate", cord.getCoordinates()[1]);
-        rset.updateDouble("z_coordinate", cord.getCoordinates()[2]);
+        rset.updateDouble("x_coordinate", cord.getXCoordinate());
+        rset.updateDouble("y_coordinate", cord.getYCoordinate());
+        rset.updateDouble("z_coordinate", cord.getZCoordinate());
         rset.updateRow();
         
     }

@@ -23,7 +23,12 @@ public class LocationTest {
         exp[0] = 1.0;
         exp[1] = 4.0;
         exp[2] = 8.1;
-        assertArrayEquals(exp, testco.getCoordinates(), tolerance);
+
+        double[] act = new double[3];
+        act[0] = testco.getXCoordinate();
+        act[1] = testco.getYCoordinate();
+        act[2] = testco.getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
     }
     @Test
     public void testLocation() throws SQLException{
@@ -48,19 +53,32 @@ public class LocationTest {
         exp[0] = -1.0;
         exp[1] = 4.0;
         exp[2] = 8.1;
-        assertArrayEquals(exp, testloc.getCoordinate().getCoordinates(), tolerance);
+
+        double[] act = new double[3];
+        act[0] = testloc.getCoordinate().getXCoordinate();
+        act[1] = testloc.getCoordinate().getYCoordinate();
+        act[2] = testloc.getCoordinate().getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
 
         Location testloc2 = new Location(1.8976, -2.098765, 0.0);
         exp[0] = 1.8976;
         exp[1] = -2.098765;
         exp[2] = 0.0;
-        assertArrayEquals(exp, testloc2.getCoordinate().getCoordinates(), tolerance);
+
+        act[0] = testloc2.getCoordinate().getXCoordinate();
+        act[1] = testloc2.getCoordinate().getYCoordinate();
+        act[2] = testloc2.getCoordinate().getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
 
         testloc2.setCoordinate(testco);
         exp[0] = -1.0;
         exp[1] = 4.0;
         exp[2] = 8.1;
-        assertArrayEquals(exp, testloc2.getCoordinate().getCoordinates(), tolerance);
+
+        act[0] = testloc2.getCoordinate().getXCoordinate();
+        act[1] = testloc2.getCoordinate().getYCoordinate();
+        act[2] = testloc2.getCoordinate().getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
 
         try {
             testloc2.setCoordinate(null);
@@ -76,20 +94,29 @@ public class LocationTest {
         Coordinate testco = new Coordinate(-1.0, -231.0, 8.1);
         Location testloc = new Location(testco);
         Photo testphoto = new Photo();
-        testphoto.location = testloc;
+        testphoto.setLocation(testloc);
         double[] exp = new double[3];
         exp[0] = -1.0;
         exp[1] = -231.0;
         exp[2] = 8.1;
-        assertArrayEquals(exp, testphoto.location.getCoordinate().getCoordinates(), tolerance);
+
+        double[] act = new double[3];
+        act[0] = testphoto.getLocation().getCoordinate().getXCoordinate();
+        act[1] = testphoto.getLocation().getCoordinate().getYCoordinate();
+        act[2] = testphoto.getLocation().getCoordinate().getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
 
         Location testloc2 = new Location(0.167,1.875,65.1900);
         Photo testphoto2 = new Photo();
-        testphoto2.location = testloc2;
+        testphoto2.setLocation(testloc2);
         exp[0] = 0.1670;
         exp[1] = 1.875;
         exp[2] = 65.1900;
-        assertArrayEquals(exp, testphoto2.location.getCoordinate().getCoordinates(), tolerance);
+
+        act[0] = testphoto2.getLocation().getCoordinate().getXCoordinate();
+        act[1] = testphoto2.getLocation().getCoordinate().getYCoordinate();
+        act[2] = testphoto2.getLocation().getCoordinate().getZCoordinate();
+        assertArrayEquals(exp, act, tolerance);
     }
 
     @Test
