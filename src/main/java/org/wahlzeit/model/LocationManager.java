@@ -51,7 +51,7 @@ public class LocationManager extends ObjectManager{
         DatabaseConnection dbcon = getDatabaseConnection();
         Connection con = dbcon.getRdbmsConnection();
         int id = getNextID(con);
-        Statement st = con.createStatement();
+        Statement st = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
         ResultSet rs = st.executeQuery("SELECT * FROM location");
         rs.moveToInsertRow();
         rs.updateInt("location_id", id);
@@ -65,7 +65,7 @@ public class LocationManager extends ObjectManager{
     protected Statement getStatement() throws SQLException{
         DatabaseConnection dbcon = getDatabaseConnection();
         Connection con = dbcon.getRdbmsConnection();
-        Statement st = con.createStatement();
+        Statement st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         return st;
     }
 

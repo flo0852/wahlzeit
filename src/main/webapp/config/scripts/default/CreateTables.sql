@@ -15,6 +15,14 @@ CREATE TABLE users (
 	creation_time bigint
 );
 
+CREATE TABLE location (
+	location_id integer PRIMARY KEY,
+	x_coordinate double precision,
+	y_coordinate double precision,
+	z_coordinate double precision
+
+);
+
 CREATE TABLE photos (
 	id integer PRIMARY KEY,
 	owner_id integer REFERENCES users(id),
@@ -57,13 +65,6 @@ CREATE TABLE globals (
 	last_session_id integer
 );
 
-CREATE TABLE location (
-	location_id integer PRIMARY KEY,
-	x_coordinate double precision,
-	y_coordinate double precision,
-	z_coordinate double precision
-
-);
 
 INSERT INTO globals (id, last_user_id, last_photo_id, last_case_id, last_session_id)
 	VALUES (0, 1, 0, 0, 0);

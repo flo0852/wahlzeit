@@ -41,7 +41,7 @@ public class EditUserPhotoFormHandler extends AbstractWebFormHandler {
 		Photo photo = PhotoManager.getPhoto(id);
 
 		part.addString(Photo.ID, id);
-		part.addString(Photo.THUMB, getPhotoThumb(us, photo));
+		part.addString(Photo.THUMB, getPhotoThumb(us, photo)); 
 		
 		part.addString(Photo.PRAISE, photo.getPraiseAsString(us.cfg()));
 		part.maskAndAddString(Photo.TAGS, photo.getTags().asString());
@@ -78,7 +78,8 @@ public class EditUserPhotoFormHandler extends AbstractWebFormHandler {
 
 		pm.savePhoto(photo);
 		
-		StringBuffer sb = UserLog.createActionEntry("EditUserPhoto");
+		StringBuffer sb = UserLog.createActionEntry(
+		"EditUserPhoto");
 		UserLog.addUpdatedObject(sb, "Photo", photo.getId().asString());
 		UserLog.log(sb);
 		

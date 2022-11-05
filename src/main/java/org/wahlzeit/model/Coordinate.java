@@ -14,19 +14,19 @@ public class Coordinate {
         z = cz;
     }
 
-    public double getXCoordinate(){
+    public double getXCoordinate() {
         return x;
     }
 
-    public double getYCoordinate(){
+    public double getYCoordinate() {
         return y;
     }
 
-    public double getZCoordinate(){
+    public double getZCoordinate() {
         return z;
     }
 
-    public void setCoordinates(double cx, double cy, double cz){
+    public void setCoordinates(double cx, double cy, double cz) {
         x = cx;
         y = cy;
         z = cz;
@@ -47,24 +47,33 @@ public class Coordinate {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o == null){
+    public boolean equals(Object o) {
+        if (o == null) {
             return false;
         }
-        if(o.getClass() == getClass()){
+        if (o.getClass() == getClass()) {
             return isEqual((Coordinate) o);
-        }
-        else{
+        } else {
             return false;
         }
     }
+
     public boolean isEqual(Coordinate c) {
+        double tolerance = 0.000001;
         if (c == null) {
-            throw new IllegalArgumentException("Given Coordinate is null");
+            return false;
         }
-        if (c.getXCoordinate() == x && c.getYCoordinate() == y && c.getZCoordinate() == z) {
-            return true;
+        if (c.getXCoordinate() > (x + tolerance) || c.getXCoordinate() < (x - tolerance)) {
+            return false;
         }
-        return false;
+
+        if (c.getYCoordinate() > (y + tolerance) || c.getYCoordinate() < (y - tolerance)) {
+            return false;
+        }
+
+        if (c.getZCoordinate() > (z + tolerance) || c.getZCoordinate() < (z - tolerance)) {
+            return false;
+        }
+        return true;
     }
 }

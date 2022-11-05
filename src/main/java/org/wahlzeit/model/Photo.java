@@ -76,8 +76,8 @@ public class Photo extends DataObject {
 	/**
 	 * 
 	 */
-	private Location location;
-	private int location_id;
+	protected Location location;
+	protected int location_id = -1;
 
 	/**
 	 * 
@@ -480,6 +480,9 @@ public class Photo extends DataObject {
 	 * @methodtype get
 	 */
 	public Location getLocation() throws SQLException{
+		if(location_id == -1){
+			return null;
+		}
 		if(location == null){
 			return LocationManager.getInstance().getLocationFromID(location_id);
 		}

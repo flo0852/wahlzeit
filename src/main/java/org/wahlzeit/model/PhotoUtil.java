@@ -21,8 +21,8 @@ public class PhotoUtil {
 	/**
 	 * 
 	 */
-	public static Photo createPhoto(File source, PhotoId id) throws Exception {
-		Photo result = PhotoFactory.getInstance().createPhoto(id);
+	public static SportPhoto createPhoto(File source, PhotoId id) throws Exception {
+		SportPhoto result = SportPhotoFactory.getInstance().createPhoto(id);
 		
 		Image sourceImage = createImageFiles(source, id);
 
