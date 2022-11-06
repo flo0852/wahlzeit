@@ -23,7 +23,7 @@ public class SportPhotoTest{
 
     @BeforeClass
     public static void setupTests() {
-        //SysConfig.setInstance(new SysConfig());
+        SysConfig.getInstance();
 
         boolean dbAvailable = DatabaseConnection.waitForDatabaseIsReady(30, 1000);
         if (!dbAvailable) {

@@ -33,6 +33,8 @@ dependencies {
 test {
     filter {
         includeTestsMatching "org.wahlzeit.*"
+        excludeTestsMatching "org.wahlzeit.LocationTest"
+        excludeTestsMatching "org.wahlzeit.SportPhotoTest"
     }
     testLogging {
             events "passed", "skipped", "failed"
