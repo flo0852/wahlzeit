@@ -30,7 +30,7 @@ public class LocationTest {
 
     @BeforeClass
     public static void setupTests() {
-        //SysConfig.setInstance(new SysConfig());
+        SysConfig.setInstance(new SysConfig());
 
         boolean dbAvailable = DatabaseConnection.waitForDatabaseIsReady(30, 1000);
         if (!dbAvailable) {

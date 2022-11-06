@@ -71,7 +71,7 @@ public class PhotoManager extends ObjectManager {
 	 * 
 	 */
 	public PhotoManager() {
-		photoTagCollector = SportPhotoFactory.getInstance().createPhotoTagCollector();
+		photoTagCollector = PhotoFactory.getInstance().createPhotoTagCollector();
 	}
 	
 	/**
