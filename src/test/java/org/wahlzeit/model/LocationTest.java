@@ -43,7 +43,7 @@ public class LocationTest {
 
     @Test
     public void testCoordinateBasicMethods() {
-        Coordinate testco = new Coordinate(1.0, 4.0, 8.1);
+        CartesianCoordinate testco = new CartesianCoordinate(1.0, 4.0, 8.1);
         double[] exp = new double[3];
         exp[0] = 1.0;
         exp[1] = 4.0;
@@ -73,7 +73,7 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        Coordinate testco = new Coordinate(-1.0, 4.0, 8.1);
+        CartesianCoordinate testco = new CartesianCoordinate(-1.0, 4.0, 8.1);
         testloc5 = new Location(testco);
         double[] exp = new double[3];
         exp[0] = -1.0;
@@ -81,9 +81,9 @@ public class LocationTest {
         exp[2] = 8.1;
 
         double[] act = new double[3];
-        act[0] = testloc5.getCoordinate().getXCoordinate();
-        act[1] = testloc5.getCoordinate().getYCoordinate();
-        act[2] = testloc5.getCoordinate().getZCoordinate();
+        act[0] = testloc5.getCartesianCoordinate().getXCoordinate();
+        act[1] = testloc5.getCartesianCoordinate().getYCoordinate();
+        act[2] = testloc5.getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
         testloc6 = new Location(1.8976, -2.098765, 0.0);
@@ -91,9 +91,9 @@ public class LocationTest {
         exp[1] = -2.098765;
         exp[2] = 0.0;
 
-        act[0] = testloc6.getCoordinate().getXCoordinate();
-        act[1] = testloc6.getCoordinate().getYCoordinate();
-        act[2] = testloc6.getCoordinate().getZCoordinate();
+        act[0] = testloc6.getCartesianCoordinate().getXCoordinate();
+        act[1] = testloc6.getCartesianCoordinate().getYCoordinate();
+        act[2] = testloc6.getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
         testloc6.setCoordinate(testco);
@@ -101,9 +101,9 @@ public class LocationTest {
         exp[1] = 4.0;
         exp[2] = 8.1;
 
-        act[0] = testloc6.getCoordinate().getXCoordinate();
-        act[1] = testloc6.getCoordinate().getYCoordinate();
-        act[2] = testloc6.getCoordinate().getZCoordinate();
+        act[0] = testloc6.getCartesianCoordinate().getXCoordinate();
+        act[1] = testloc6.getCartesianCoordinate().getYCoordinate();
+        act[2] = testloc6.getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
         try {
@@ -127,13 +127,13 @@ public class LocationTest {
         double x = rs.getDouble("x_coordinate");
         double y = rs.getDouble("y_coordinate");
         double z = rs.getDouble("z_coordinate");
-        assertEquals(x, testloc4.getCoordinate().getXCoordinate(), tolerance);
-        assertEquals(y, testloc4.getCoordinate().getYCoordinate(), tolerance);
-        assertEquals(z, testloc4.getCoordinate().getZCoordinate(), tolerance);
+        assertEquals(x, testloc4.getCartesianCoordinate().getXCoordinate(), tolerance);
+        assertEquals(y, testloc4.getCartesianCoordinate().getYCoordinate(), tolerance);
+        assertEquals(z, testloc4.getCartesianCoordinate().getZCoordinate(), tolerance);
         deleteLoc(testloc4.getID());
 
         //Test for setCoordinate
-        Coordinate test_cord = new Coordinate(19.00, 04.05, 19.94);
+        CartesianCoordinate test_cord = new CartesianCoordinate(19.00, 04.05, 19.94);
         testloc4.setCoordinate(test_cord);
         Statement st2 = LocationManager.getInstance().getStatement();
         String sqlQuery2 = "SELECT * FROM location WHERE location_id = " + loc_id;
@@ -144,13 +144,13 @@ public class LocationTest {
         x = rs.getDouble("x_coordinate");
         y = rs.getDouble("y_coordinate");
         z = rs.getDouble("z_coordinate");
-        assertEquals(x, testloc4.getCoordinate().getXCoordinate(), tolerance);
-        assertEquals(y, testloc4.getCoordinate().getYCoordinate(), tolerance);
-        assertEquals(z, testloc4.getCoordinate().getZCoordinate(), tolerance);
+        assertEquals(x, testloc4.getCartesianCoordinate().getXCoordinate(), tolerance);
+        assertEquals(y, testloc4.getCartesianCoordinate().getYCoordinate(), tolerance);
+        assertEquals(z, testloc4.getCartesianCoordinate().getZCoordinate(), tolerance);
 
         //Test for getLocationFromID
         testloc3 = LocationManager.getInstance().getLocationFromID(loc_id);
-        if(!test_cord.equals(testloc3.getCoordinate())){
+        if(!test_cord.equals(testloc3.getCartesianCoordinate())){
             fail();
         }
         deleteLoc(testloc3.getID());
@@ -159,7 +159,7 @@ public class LocationTest {
 
     @Test
     public void testPhotoLocation() throws SQLException {
-        Coordinate testco = new Coordinate(-1.0, -231.0, 8.1);
+        CartesianCoordinate testco = new CartesianCoordinate(-1.0, -231.0, 8.1);
         testloc = new Location(testco);
         Photo testphoto = new Photo();
         testphoto.setLocation(testloc);
@@ -169,9 +169,9 @@ public class LocationTest {
         exp[2] = 8.1;
 
         double[] act = new double[3];
-        act[0] = testphoto.getLocation().getCoordinate().getXCoordinate();
-        act[1] = testphoto.getLocation().getCoordinate().getYCoordinate();
-        act[2] = testphoto.getLocation().getCoordinate().getZCoordinate();
+        act[0] = testphoto.getLocation().getCartesianCoordinate().getXCoordinate();
+        act[1] = testphoto.getLocation().getCartesianCoordinate().getYCoordinate();
+        act[2] = testphoto.getLocation().getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
         testloc2 = new Location(0.167, 1.875, 65.1900);
@@ -181,58 +181,58 @@ public class LocationTest {
         exp[1] = 1.875;
         exp[2] = 65.1900;
 
-        act[0] = testphoto2.getLocation().getCoordinate().getXCoordinate();
-        act[1] = testphoto2.getLocation().getCoordinate().getYCoordinate();
-        act[2] = testphoto2.getLocation().getCoordinate().getZCoordinate();
+        act[0] = testphoto2.getLocation().getCartesianCoordinate().getXCoordinate();
+        act[1] = testphoto2.getLocation().getCartesianCoordinate().getYCoordinate();
+        act[2] = testphoto2.getLocation().getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
     }
 
     @Test
     public void testDistance() {
-        Coordinate c1 = new Coordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c1 = new CartesianCoordinate(2.0, 1.0, 4.0);
         try {
-            c1.getDistance(null);
+            c1.getCartesianDistance(null);
             fail("null isn't regcognized");
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
 
-        Coordinate c2 = new Coordinate(2.0, 1.0, 4.0);
-        assertEquals(0.0, c1.getDistance(c2), tolerance);
+        CartesianCoordinate c2 = new CartesianCoordinate(2.0, 1.0, 4.0);
+        assertEquals(0.0, c1.getCartesianDistance(c2), tolerance);
 
-        Coordinate c3 = new Coordinate(0.0, 0.0, 0.0);
-        Coordinate c4 = new Coordinate(0.0, 0.0, 0.0);
-        assertEquals(0.0, c3.getDistance(c4), tolerance);
+        CartesianCoordinate c3 = new CartesianCoordinate(0.0, 0.0, 0.0);
+        CartesianCoordinate c4 = new CartesianCoordinate(0.0, 0.0, 0.0);
+        assertEquals(0.0, c3.getCartesianDistance(c4), tolerance);
 
-        Coordinate c5 = new Coordinate(-2.0, 1.0, 4.0);
-        assertEquals(4.0, c1.getDistance(c5), tolerance);
+        CartesianCoordinate c5 = new CartesianCoordinate(-2.0, 1.0, 4.0);
+        assertEquals(4.0, c1.getCartesianDistance(c5), tolerance);
 
-        Coordinate c6 = new Coordinate(400.268, 267.978, 567.987);
-        Coordinate c7 = new Coordinate(76.5879, 0.7856, 1.0976);
-        assertEquals(705.3539378, c6.getDistance(c7), tolerance);
+        CartesianCoordinate c6 = new CartesianCoordinate(400.268, 267.978, 567.987);
+        CartesianCoordinate c7 = new CartesianCoordinate(76.5879, 0.7856, 1.0976);
+        assertEquals(705.3539378, c6.getCartesianDistance(c7), tolerance);
 
     }
 
     @Test
     public void testIsEqual() {
         
-        Coordinate c1 = new Coordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c1 = new CartesianCoordinate(2.0, 1.0, 4.0);
         try {
-            c1.getDistance(null);
+            c1.getCartesianDistance(null);
             fail("null isn't regcognized");
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
 
-        Coordinate c2 = new Coordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c2 = new CartesianCoordinate(2.0, 1.0, 4.0);
         assertTrue(c1.equals(c2));
 
         assertFalse(c1.equals(null));
 
-        Coordinate c3 = new Coordinate(-2.0, 1.0, 4.0);
+        CartesianCoordinate c3 = new CartesianCoordinate(-2.0, 1.0, 4.0);
         assertFalse(c1.equals(c3));
 
-        Coordinate c4 = new Coordinate(2.0, 1.00000001, 4.0);
+        CartesianCoordinate c4 = new CartesianCoordinate(2.0, 1.00000001, 4.0);
         assertTrue(c4.equals(c1));
     }
     

@@ -17,13 +17,13 @@ public class Location extends DataObject{
             throw new IllegalArgumentException("Given Coordinate is null");
         }
         cord = c;
-        id = LocationManager.getInstance().insertData(cord);
+        id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate());
     }
     
     //alternative Constructor
     public Location(double cx, double cy, double cz) throws SQLException{
-        cord = new Coordinate(cx, cy, cz);
-        id = LocationManager.getInstance().insertData(cord);
+        cord = new CartesianCoordinate(cx, cy, cz);
+        id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate());
     }
 
     //Constructor for ResultSet
@@ -38,7 +38,16 @@ public class Location extends DataObject{
         return id;
     }
 
-    //Getter for cord
+    //Getter for Coordinate
+
+    public CartesianCoordinate getCartesianCoordinate(){
+        return cord.asCartesianCoordinate();
+    }
+
+    public SphericCoordinate getSphericCoordinate(){
+        return cord.asSphericCoordinate();
+    }
+
     public Coordinate getCoordinate(){
         return cord;
     }
@@ -68,17 +77,16 @@ public class Location extends DataObject{
         double cx = rset.getDouble("x_coordinate");
         double cy = rset.getDouble("y_coordinate");
         double cz = rset.getDouble("Z_coordinate");
-        cord = new Coordinate(cx, cy, cz);
-        cord.setCoordinates(cx, cy, cz);
+        cord = new CartesianCoordinate(cx, cy, cz); //je nach art
         
     }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException { //update Row
         rset.updateInt("location_id", id);
-        rset.updateDouble("x_coordinate", cord.getXCoordinate());
-        rset.updateDouble("y_coordinate", cord.getYCoordinate());
-        rset.updateDouble("z_coordinate", cord.getZCoordinate());
+        rset.updateDouble("x_coordinate", cord.asCartesianCoordinate().getXCoordinate());
+        rset.updateDouble("y_coordinate", cord.asCartesianCoordinate().getYCoordinate());
+        rset.updateDouble("z_coordinate", cord.asCartesianCoordinate().getZCoordinate());
         rset.updateRow();
         
     }

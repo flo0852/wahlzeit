@@ -44,7 +44,7 @@ public class LocationManager extends ObjectManager{
     }
 
     //Insert new Row in Location
-    protected int insertData(Coordinate c) throws SQLException{
+    protected int insertData(CartesianCoordinate c) throws SQLException{
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
         }

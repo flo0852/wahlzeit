@@ -65,9 +65,9 @@ public class SportPhotoTest{
         double x = rs2.getDouble("x_coordinate");
         double y = rs2.getDouble("y_coordinate");
         double z = rs2.getDouble("z_coordinate");
-        assertEquals(x, loc.getCoordinate().getXCoordinate(), tolerance);
-        assertEquals(y, loc.getCoordinate().getYCoordinate(), tolerance);
-        assertEquals(z, loc.getCoordinate().getZCoordinate(), tolerance);
+        assertEquals(x, loc.getCartesianCoordinate().getXCoordinate(), tolerance);
+        assertEquals(y, loc.getCartesianCoordinate().getYCoordinate(), tolerance);
+        assertEquals(z, loc.getCartesianCoordinate().getZCoordinate(), tolerance);
     }
 
     @AfterClass
