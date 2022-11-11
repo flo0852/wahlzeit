@@ -1,6 +1,6 @@
 package org.wahlzeit.model;
 
-public class CartesianCoordinate extends AbstractCoordinate{
+public class CartesianCoordinate extends AbstractCoordinate {
     private double x;
     private double y;
     private double z;
@@ -33,11 +33,13 @@ public class CartesianCoordinate extends AbstractCoordinate{
     public CartesianCoordinate asCartesianCoordinate() {
         return this;
     }
+
     @Override
     public SphericCoordinate asSphericCoordinate() {
+
         double radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-        double theta = Math.atan(y/x);
-        double phi = Math.atan(Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))/z);
+        double phi = Math.acos(z / radius);
+        double theta = Math.atan(y / x);
         return new SphericCoordinate(phi, theta, radius);
     }
 

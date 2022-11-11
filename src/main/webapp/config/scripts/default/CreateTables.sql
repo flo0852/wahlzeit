@@ -38,7 +38,7 @@ CREATE TABLE photos (
 	praise_sum integer,
 	no_votes integer,
 	creation_time bigint,
-	location_id integer REFERENCES location(location_id),
+	location_id integer REFERENCES location(location_id) ON DELETE SET NULL ON UPDATE CASCADE,
 	sport text
 );
 
