@@ -7,29 +7,26 @@ public class SportPhotoFactory extends PhotoFactory{
     /**
 	 * Hidden singleton instance; needs to be initialized from the outside.
 	 */
-    private static SportPhotoFactory instance = null;
+    private static boolean isInitialized = false;
 
     protected SportPhotoFactory(){
         //Do nothing
     }
 
+	public static void initialize(){
+		getInstance();
+	}
     /**
 	 * Public singleton access method.
 	 */
 	public static synchronized SportPhotoFactory getInstance() {
-		if (instance == null) {
-			SysLog.logSysInfo("setting generic SportPhotoFactory");
-			setInstance(new SportPhotoFactory());
+		if (!isInitialized) {
+			SysLog.logSysInfo("setting specialized SportPhotoFactory");
+			PhotoFactory.setInstance(new SportPhotoFactory());
+			isInitialized = true;
 		}
 		
-		return instance;
-	}
-    protected static synchronized void setInstance(SportPhotoFactory sportPhotoFactory) {
-		if (instance != null) {
-			throw new IllegalStateException("attempt to initialize SportPhotoFactory twice");
-		}
-		
-		instance = sportPhotoFactory;
+		return (SportPhotoFactory) PhotoFactory.getInstance();
 	}
 
 	public SportPhoto createPhoto(){

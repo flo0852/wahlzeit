@@ -1,16 +1,23 @@
 package org.wahlzeit.model;
 import java.io.File;
+import java.net.PortUnreachableException;
 
 public class SportPhotoManager extends PhotoManager {
 
-protected static final SportPhotoManager instance = new SportPhotoManager();
 
     public SportPhotoManager(){
         photoTagCollector = PhotoFactory.getInstance().createPhotoTagCollector();
     }
 
     public static final SportPhotoManager getInstance() {
-		return instance;
+		if(PhotoManager.getInstance() == null){
+			PhotoManager.setInstance(new SportPhotoManager());
+		}
+		return (SportPhotoManager) PhotoManager.getInstance();
+	}
+
+	public static void initialize(){
+		getInstance();
 	}
 
     public SportPhoto createPhoto(File file) throws Exception {

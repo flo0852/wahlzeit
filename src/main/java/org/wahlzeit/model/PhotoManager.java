@@ -20,7 +20,7 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 * 
 	 */
-	protected static final PhotoManager instance = new PhotoManager();
+	private static PhotoManager instance = null;
 
 	/**
 	 * In-memory cache for photos
@@ -38,7 +38,14 @@ public class PhotoManager extends ObjectManager {
 	public static PhotoManager getInstance() {
 		return instance;
 	}
-	
+
+	/**
+	 * 
+	 */
+	public static void setInstance(PhotoManager inst) {
+		instance = inst;
+	}
+
 	/**
 	 * 
 	 */
