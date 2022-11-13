@@ -77,7 +77,7 @@ public class Location extends DataObject {
         double cx = rset.getDouble("x_coordinate");
         double cy = rset.getDouble("y_coordinate");
         double cz = rset.getDouble("Z_coordinate");
-        cord = new CartesianCoordinate(cx, cy, cz); // je nach art
+        cord = new CartesianCoordinate(cx, cy, cz);
 
     }
 
