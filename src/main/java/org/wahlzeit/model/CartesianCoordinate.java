@@ -23,12 +23,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return z;
     }
 
-    public void setCoordinates(double cx, double cy, double cz) {
-        x = cx;
-        y = cy;
-        z = cz;
-    }
-
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
         return this;
@@ -36,10 +30,13 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
-
-        double radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        double xe = x;
+        if(x == 0.0){
+            xe = 0.0000001;
+        }
+        double radius = Math.sqrt(Math.pow(xe, 2) + Math.pow(y, 2) + Math.pow(z, 2));
         double phi = Math.acos(z / radius);
-        double theta = Math.atan(y / x);
+        double theta = Math.atan(y / xe);
         return new SphericCoordinate(phi, theta, radius);
     }
 

@@ -329,8 +329,8 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        cs2.setCoordinates(Math.PI, 1.25 * Math.PI, 14000);
-        assertEquals(Math.PI, cs1.getCentralAngle(cs2), tolerance);
+        SphericCoordinate cs3 = new SphericCoordinate(Math.PI, 1.25 * Math.PI, 14000);
+        assertEquals(Math.PI, cs1.getCentralAngle(cs3), tolerance);
     }
 
     @Test

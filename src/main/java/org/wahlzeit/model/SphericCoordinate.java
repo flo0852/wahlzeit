@@ -23,12 +23,6 @@ public class SphericCoordinate extends AbstractCoordinate {
         return radius;
     }
 
-    public void setCoordinates(double phi, double theta, double radius) {
-        this.phi = phi;
-        this.theta = theta;
-        this.radius = radius;
-    }
-
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
         double x = radius * Math.sin(phi) * Math.cos(theta);
