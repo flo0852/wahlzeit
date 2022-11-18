@@ -105,6 +105,14 @@ public class LocationTest {
         act[2] = testco_sphe.getRadius();
         assertArrayEquals(exp, act, tolerance);
 
+        testco = new CartesianCoordinate(0, 0, 0);
+        testco_sphe = testco.asSphericCoordinate();
+        assertTrue(testco.equals(testco_sphe));
+
+        testco = new CartesianCoordinate(0, 1, 0);
+        testco_sphe = testco.asSphericCoordinate();
+        assertTrue(testco.equals(testco_sphe));
+
     }
 
     @Test
