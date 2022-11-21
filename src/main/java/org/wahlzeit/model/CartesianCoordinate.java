@@ -1,9 +1,16 @@
 package org.wahlzeit.model;
 
+
 public class CartesianCoordinate extends AbstractCoordinate {
     private double x;
     private double y;
     private double z;
+
+    //Used for class Invariant
+    private double oldx;
+    private double oldy;
+    private double oldz;
+
 
     public CartesianCoordinate(double cx, double cy, double cz) {
         x = cx;
@@ -11,7 +18,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
         z = cz;
     }
 
-    public double getXCoordinate() {
+    public double getXCoordinate(){
         return x;
     }
 
@@ -30,6 +37,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
+        assertnoChangesStart();
         double xe = x;
         if(x == 0.0){
             xe = 0.0000001;
@@ -43,10 +51,16 @@ public class CartesianCoordinate extends AbstractCoordinate {
         }
         double phi = Math.acos(z / radius);
         double theta = Math.atan(y / xe);
+        assertnoChangesCheck();
         return new SphericCoordinate(phi, theta, radius);
     }
 
     protected boolean doIsEqual(CartesianCoordinate c) {
+        assertnoChangesStart();
+        //Preconditions
+        assertIsNonNullArgument(c);
+
+        //Method Code
         double tolerance = 0.000001;
         if (c == null) {
             return false;
@@ -62,7 +76,22 @@ public class CartesianCoordinate extends AbstractCoordinate {
         if (c.getZCoordinate() > (z + tolerance) || c.getZCoordinate() < (z - tolerance)) {
             return false;
         }
+        assertnoChangesCheck();
         return true;
+    }
+
+    private void assertnoChangesStart() {
+        oldx = x;
+        oldy = y;
+        oldz = z;
+    }
+
+    private void assertnoChangesCheck() {
+        if(x != oldx || y != oldy || z != oldz){
+            x = oldx;
+            y = oldy;
+            z = oldz;
+        }
     }
 
 }
