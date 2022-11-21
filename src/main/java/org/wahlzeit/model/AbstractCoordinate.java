@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.lang.Math;
 
 public abstract class AbstractCoordinate implements Coordinate {
+    private static final double radius_tolerance = 0.005;
     public double getCartesianDistance(Coordinate c) {
         if (c == null) {
             throw new IllegalArgumentException("Given Coordinate is null");
@@ -30,7 +31,7 @@ public abstract class AbstractCoordinate implements Coordinate {
         SphericCoordinate c1 = this.asSphericCoordinate();
         SphericCoordinate c2 = c.asSphericCoordinate();
 
-        if (c1.getRadius() > c2.getRadius() * 1.0005 || c1.getRadius() < c2.getRadius() * 0.9995) {
+        if (c1.getRadius() > c2.getRadius() * (1+radius_tolerance) || c1.getRadius() < c2.getRadius() * (1-radius_tolerance)) {
             throw new IllegalArgumentException("radius has to be the same at both Ccoordinate");
         }
 
