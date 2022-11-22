@@ -5,7 +5,7 @@ public class SphericCoordinate extends AbstractCoordinate {
     private double theta;
     private double radius;
 
-    //Used for class Invariant
+    // Used for class Invariant
     private double oldphi;
     private double oldtheta;
     private double oldradius;
@@ -42,6 +42,7 @@ public class SphericCoordinate extends AbstractCoordinate {
     public SphericCoordinate asSphericCoordinate() {
         return this;
     }
+
     private void assertnoChangesStart() {
         oldphi = phi;
         oldtheta = theta;
@@ -49,10 +50,14 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     private void assertnoChangesCheck() {
-        if(phi != oldphi || theta != oldtheta || radius != oldradius){
-            phi = oldphi;
-            theta = oldtheta;
-            radius = oldradius;
+        if (phi != oldphi || theta != oldtheta || radius != oldradius) {
+            rescueChanges();
         }
+    }
+
+    private void rescueChanges() {
+        phi = oldphi;
+        theta = oldtheta;
+        radius = oldradius;
     }
 }

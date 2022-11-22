@@ -95,7 +95,7 @@ public abstract class AbstractCoordinate implements Coordinate {
     protected static void assertSimilarRadius(Coordinate c1, Coordinate c2) {
         if (c1.asSphericCoordinate().getRadius() > c2.asSphericCoordinate().getRadius() * (1 + radius_tolerance) || c1
                 .asSphericCoordinate().getRadius() < c2.asSphericCoordinate().getRadius() * (1 - radius_tolerance)) {
-            throw new IllegalArgumentException("radius has to be the same at both Ccoordinates");
+            throw new IllegalArgumentException("radius has to be similar at both Coordinates");
         }
     }
 

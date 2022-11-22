@@ -1,16 +1,14 @@
 package org.wahlzeit.model;
 
-
 public class CartesianCoordinate extends AbstractCoordinate {
     private double x;
     private double y;
     private double z;
 
-    //Used for class Invariant
+    // Used for class Invariant
     private double oldx;
     private double oldy;
     private double oldz;
-
 
     public CartesianCoordinate(double cx, double cy, double cz) {
         x = cx;
@@ -18,7 +16,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
         z = cz;
     }
 
-    public double getXCoordinate(){
+    public double getXCoordinate() {
         return x;
     }
 
@@ -37,16 +35,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
-        assertnoChangesStart();
+        assertnoChangesStart(); 
         double xe = x;
-        if(x == 0.0){
+        if (x == 0.0) {
             xe = 0.0000001;
         }
         double radius = 0.0;
-        if(y == 0 && z == 0){
+        if (y == 0 && z == 0) {
             radius = Math.sqrt(Math.pow(xe, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-        }
-        else{
+        } else {
             radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
         }
         double phi = Math.acos(z / radius);
@@ -57,10 +54,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     protected boolean doIsEqual(CartesianCoordinate c) {
         assertnoChangesStart();
-        //Preconditions
+        // Preconditions
         assertIsNonNullArgument(c);
 
-        //Method Code
+        // Method Code
         double tolerance = 0.000001;
         if (c == null) {
             return false;
@@ -87,11 +84,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     private void assertnoChangesCheck() {
-        if(x != oldx || y != oldy || z != oldz){
-            x = oldx;
-            y = oldy;
-            z = oldz;
+        if (x != oldx || y != oldy || z != oldz) {
+            rescueChanges();
         }
+    }
+
+    private void rescueChanges() {
+        x = oldx;
+        y = oldy;
+        z = oldz;
     }
 
 }
