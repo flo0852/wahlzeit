@@ -52,6 +52,9 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return new SphericCoordinate(phi, theta, radius);
     }
 
+    /*
+     * Precondition: Argument not null
+     */
     protected boolean doIsEqual(CartesianCoordinate c) {
         assertnoChangesStart();
         // Preconditions

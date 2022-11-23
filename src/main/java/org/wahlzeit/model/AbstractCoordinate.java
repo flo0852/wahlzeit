@@ -7,6 +7,9 @@ import java.lang.Math;
 public abstract class AbstractCoordinate implements Coordinate {
     private static final double radius_tolerance = 0.005;
 
+    /*
+     * Precondition: Argument not null
+     */
     public double getCartesianDistance(Coordinate c) {
         // Preconditions
         assertIsNonNullArgument(c);
@@ -25,6 +28,10 @@ public abstract class AbstractCoordinate implements Coordinate {
         return dist;
     }
 
+    /*
+     * Precondition 1: Argument not null
+     * Precondition 2: Similar radius
+     */
     public double getCentralAngle(Coordinate c) {
         // Preconditions
         assertIsNonNullArgument(c);
@@ -59,6 +66,9 @@ public abstract class AbstractCoordinate implements Coordinate {
         return false;
     }
 
+    /*
+     * Precondition: Argument not null
+     */
     @Override
     public boolean isEqual(Coordinate c) {
         // Preconditions
