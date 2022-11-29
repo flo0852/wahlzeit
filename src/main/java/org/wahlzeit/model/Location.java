@@ -3,33 +3,57 @@ package org.wahlzeit.model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.wahlzeit.services.DataObject;
+import org.wahlzeit.services.SysLog;
 
 public class Location extends DataObject {
 
     private Coordinate cord;
-    private int id;
+    private int id = -1;
 
     public Location(Coordinate c) throws SQLException {
-        if (c == null) {
-            throw new IllegalArgumentException("Given Coordinate is null");
-        }
+        assertIsNonNullArgument(c, "Coordinate Object - Location Constructor");
         cord = c;
-        id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate());
+        try {
+            id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate()); // 1. Try
+        } catch (SQLException sql_e1) {
+            try {
+                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
+                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 2. Try
+            } catch (SQLException sql_e2) {
+                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
+                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 3. Try
+            }
+        }
     }
 
     // alternative Constructor
     public Location(double cx, double cy, double cz) throws SQLException {
         cord = new CartesianCoordinate(cx, cy, cz);
-        id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate());
+        try {
+            id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate()); // 1. Try
+        } catch (SQLException sql_e1) {
+            try {
+                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
+                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 2. Try
+            } catch (SQLException sql_e2) {
+                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
+                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 3. Try
+            }
+        }
     }
 
     // Constructor for ResultSet
     public Location(ResultSet rset) throws SQLException {
-        if (rset == null) {
-            throw new IllegalArgumentException("Given Coordinate is null");
+        assertIsNonNullArgument(rset, "ResultSet Object - Location Constructor");
+        for (int i = 0; i < 2; i++) {
+            try {
+                readFrom(rset);
+                return;
+            } catch (SQLException sex) {
+                SysLog.logSysInfo("readFrom at Location Constructor failed, trying again");
+            }
         }
         readFrom(rset);
     }
@@ -53,17 +77,11 @@ public class Location extends DataObject {
     }
 
     // Setter for cord
-    public void setCoordinate(Coordinate c) throws SQLException {
-        if (c == null) {
-            throw new IllegalArgumentException("Given Coordinate is null");
-        }
-        Statement st = LocationManager.getInstance().getStatement();
-        String sqlInquiry = "SELECT * FROM location WHERE location_id = ";
-        sqlInquiry = sqlInquiry + getIdAsString();
-        ResultSet rs = st.executeQuery(sqlInquiry);
-        rs.absolute(1);
+    public void setCoordinate(Coordinate c) {
+        assertIsNonNullArgument(c, "Coordinate Object - setCoordinate()");
         cord = c.asCartesianCoordinate();
-        writeOn(rs);
+        incWriteCount();
+        LocationManager.getInstance().updateCoordinate(this, c.asCartesianCoordinate(), id);
     }
 
     @Override
@@ -94,6 +112,12 @@ public class Location extends DataObject {
     @Override
     public void writeId(PreparedStatement stmt, int pos) throws SQLException {
         stmt.setInt(pos, id);
+    }
+
+    protected void assertIsNonNullArgument(Object arg, String label) {
+        if (arg == null) {
+            throw new IllegalArgumentException(label + " should not be null");
+        }
     }
 
 }

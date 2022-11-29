@@ -2,9 +2,6 @@ package org.wahlzeit.model;
 
 import java.sql.*;
 
-import org.wahlzeit.services.*;
-import org.wahlzeit.utils.*;
-
 public class SportPhoto extends Photo {
 
     protected String sport;

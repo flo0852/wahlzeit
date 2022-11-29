@@ -256,7 +256,6 @@ public class LocationTest {
         // Test for getLocationFromID
         testloc3 = LocationManager.getInstance().getLocationFromID(loc_id);
         assertTrue(test_cord.equals(testloc3.getCartesianCoordinate()));
-
     }
 
     @Test
@@ -326,10 +325,10 @@ public class LocationTest {
     @Test
     public void testCentralAngle() {
         SphericCoordinate cs1 = new SphericCoordinate(0, 1.5 * Math.PI, 14000);
-        SphericCoordinate cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14002);
+        SphericCoordinate cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14020);
         assertEquals(0.0, cs1.getCentralAngle(cs2), tolerance);
 
-        cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14020);
+        cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14200);
         try {
             assertEquals(0.0, cs1.getCentralAngle(cs2), tolerance);
             fail("different radius should fail");

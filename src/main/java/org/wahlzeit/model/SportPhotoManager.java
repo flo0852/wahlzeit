@@ -1,6 +1,5 @@
 package org.wahlzeit.model;
 import java.io.File;
-import java.net.PortUnreachableException;
 
 public class SportPhotoManager extends PhotoManager {
 

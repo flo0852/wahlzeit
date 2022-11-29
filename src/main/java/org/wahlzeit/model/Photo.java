@@ -484,7 +484,28 @@ public class Photo extends DataObject {
 			return null;
 		}
 		if(location == null){
-			return LocationManager.getInstance().getLocationFromID(location_id);
+			try {
+				Location loc = LocationManager.getInstance().getLocationFromID(location_id);
+				return loc;
+			} catch (SQLException sex) {
+				SysLog.logSysInfo("SQL Error: " + sex.getErrorCode() + " Trying again - getLocation");
+				try{
+					Location loc = LocationManager.getInstance().getLocationFromID(location_id);
+					return loc;
+				}
+				catch(SQLException sex2){
+					SysLog.logSysError("SQL Error: " + sex.getErrorCode() + " - getLocation");
+					return null;
+				}
+				catch(IllegalArgumentException illex){
+					SysLog.logSysInfo("ID: " + location_id + " not found - getLocation");
+					return null;
+				}
+			}
+			catch(IllegalArgumentException illex){
+				SysLog.logSysInfo("ID: " + location_id + " not found - getLocation");
+				return null;
+			}
 		}
 		return location;
 	}
