@@ -10,9 +10,11 @@ import org.wahlzeit.services.SysLog;
 public class Location extends DataObject {
 
     private Coordinate cord;
-    private int id = -1;
+    private int id = -1; //>= 0 := valid ID
+                         //-1 := no ID
+                         //< -1 := provisionally ID -> Inserting in Database failed -> only saved in Cache
 
-    public Location(Coordinate c) throws SQLException {
+    public Location(Coordinate c){
         assertIsNonNullArgument(c, "Coordinate Object - Location Constructor");
         cord = c;
         try {
@@ -22,14 +24,14 @@ public class Location extends DataObject {
                 SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
                 id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 2. Try
             } catch (SQLException sql_e2) {
-                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
-                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 3. Try
+                SysLog.logSysInfo("insertData at Location Constructor finally failed, adding in Location Cache");
+                id = LocationManager.getInstance().alternativeSave(this);
             }
         }
     }
 
     // alternative Constructor
-    public Location(double cx, double cy, double cz) throws SQLException {
+    public Location(double cx, double cy, double cz){
         cord = new CartesianCoordinate(cx, cy, cz);
         try {
             id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate()); // 1. Try
@@ -38,8 +40,8 @@ public class Location extends DataObject {
                 SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
                 id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 2. Try
             } catch (SQLException sql_e2) {
-                SysLog.logSysInfo("insertData at Location Constructor failed, trying again");
-                id = LocationManager.getInstance().tryInsertAgain(this, cord.asCartesianCoordinate()); // 3. Try
+                SysLog.logSysInfo("insertData at Location Constructor finally failed, adding in Location Cache");
+                id = LocationManager.getInstance().alternativeSave(this);
             }
         }
     }
@@ -114,6 +116,15 @@ public class Location extends DataObject {
     @Override
     public void writeId(PreparedStatement stmt, int pos) throws SQLException {
         stmt.setInt(pos, id);
+    }
+
+    protected void setDatabaseID(int positive_id){
+        if(id < -1){
+            id = positive_id;
+        }
+        else{ //IDs from locations which are already in the database mustn't be changed
+            throw new IllegalAccessError("Changes on IDs of locations which are already in the Database are strictly forbidden");
+        }
     }
 
     protected void assertIsNonNullArgument(Object arg, String label) {
