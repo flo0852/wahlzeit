@@ -75,14 +75,10 @@ public class LocationManager extends ObjectManager {
         Statement st = getStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM location WHERE location_id = " + current_id);
         if (!rs.next()) {
-            return insertData(c); //nothing was inserted -> try insert again
-        } else { //new row with at least the id has been inserted -> insert the rest
-            rs.updateDouble("x_coordinate", c.getXCoordinate());
-            rs.updateDouble("y_coordinate", c.getYCoordinate());
-            rs.updateDouble("z_coordinate", c.getZCoordinate());
-            rs.updateRow();
+            return insertData(c); // nothing was inserted -> try insert again
+        } else { // new row has already been inserted
+            return current_id;
         }
-        return current_id;
     }
 
     protected void updateCoordinate(Location loc, CartesianCoordinate c, int id) {

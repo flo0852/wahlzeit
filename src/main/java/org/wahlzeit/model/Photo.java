@@ -479,18 +479,18 @@ public class Photo extends DataObject {
 	 * 
 	 * @methodtype get
 	 */
-	public Location getLocation() throws SQLException{
+	public Location getLocation(){
 		if(location_id == -1){
 			return null;
 		}
 		if(location == null){
 			try {
-				Location loc = LocationManager.getInstance().getLocationFromID(location_id);
+				Location loc = LocationManager.getInstance().getLocationFromID(location_id); //1. Try
 				return loc;
 			} catch (SQLException sex) {
 				SysLog.logSysInfo("SQL Error: " + sex.getErrorCode() + " Trying again - getLocation");
 				try{
-					Location loc = LocationManager.getInstance().getLocationFromID(location_id);
+					Location loc = LocationManager.getInstance().getLocationFromID(location_id); //2. Try
 					return loc;
 				}
 				catch(SQLException sex2){
