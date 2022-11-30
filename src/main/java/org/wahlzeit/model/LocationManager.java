@@ -138,7 +138,9 @@ public class LocationManager extends ObjectManager {
             int id = loc.getID();
             for (int i = 0; i < 3; i++) { // 3 Tries
                 try {
+                    int oldid = loc.getID();
                     id = insertData(loc.getCartesianCoordinate());
+                    unsavedLocations.remove(oldid);
                     break;
                 } catch (SQLException sex) {
                     if(i == 2){
