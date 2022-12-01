@@ -45,6 +45,7 @@ public class LocationManager extends ObjectManager {
     }
 
     protected Location getLocationFromID(int id) throws SQLException {
+        assertIsValidID(id);
         Location loc_unsaved = unsavedLocations.get(id);
         if (loc_unsaved != null) {
             return loc_unsaved;
@@ -80,6 +81,7 @@ public class LocationManager extends ObjectManager {
     }
 
     protected int tryInsertAgain(Location loc, CartesianCoordinate c) throws SQLException {
+        assertIsNonNullArgument(c, "Location Object - tryInsertAgain");
         assertIsNonNullArgument(c, "CartesianCoordinate Object - tryInsertAgain");
         Statement st = getStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM location WHERE location_id = " + current_id);
@@ -91,6 +93,9 @@ public class LocationManager extends ObjectManager {
     }
 
     protected void updateCoordinate(Location loc, CartesianCoordinate c, int id) {
+        assertIsNonNullArgument(loc, "Coordinate Object - updateCoordinate()");
+        assertIsNonNullArgument(loc, "Location Object - updateCoordinate()");
+        assertIsValidID(id);
         if (id < -1) {
             Location loc_unsaved = unsavedLocations.get(id);
             if (loc_unsaved == null) { // should never happen
@@ -100,8 +105,6 @@ public class LocationManager extends ObjectManager {
             return; // Cord was already set by setCoordinate and Location is not in Database so no
                     // changes there needed
         }
-        assertIsNonNullArgument(loc, "Location Object - updateCoordinate()");
-        assertIsValidID(id);
         try {
             PreparedStatement stmt = getUpdatingStatement("SELECT * FROM location WHERE location_id = ?");
             updateObject(loc, stmt);
@@ -123,12 +126,13 @@ public class LocationManager extends ObjectManager {
     }
 
     protected void assertIsValidID(int id) {
-        if (id < 0 || id > current_id) {
+        if (id == -1 || (id > current_id && current_id != -1)) {
             throw new IllegalArgumentException(id + " is not a valid ID");
         }
     }
 
     protected int alternativeSave(Location loc) {
+        assertIsNonNullArgument(loc, "Location Object - alternativeSave()");
         unsavedLocations.put(--failed_id, loc);
         return failed_id;
     }
