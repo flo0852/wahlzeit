@@ -20,7 +20,7 @@ import org.wahlzeit.services.SysConfig;
 
 public class LocationTest {
 
-    private static final double tolerance = 0.000001;
+    private static final double tolerance = 0.000002;
     private static Location testloc;
     private static Location testloc2;
     private static Location testloc3;
@@ -44,8 +44,62 @@ public class LocationTest {
     }
 
     @Test
+    public void testCoordinateShared(){
+        int count = AbstractCoordinate.getNumberCoordinateElements();
+        CartesianCoordinate.getCartesianCoordinateObject(1.0, 1.0, 1.0);
+        int count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count + 1, count2);
+        CartesianCoordinate.getCartesianCoordinateObject(1.0, 1.0, 1.0);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count2, count);
+
+
+
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        SphericCoordinate.getSphericCoordinateObject(1.0, 1.0, 1.0);
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count + 1, count2);
+        SphericCoordinate.getSphericCoordinateObject(1.0, 1.0, 1.0);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count2, count);
+
+
+
+        SphericCoordinate testco = SphericCoordinate.getSphericCoordinateObject(0.5*Math.PI, 0.5*Math.PI, 80000);
+        CartesianCoordinate.getCartesianCoordinateObject(0, 80000, 0);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        testco.asCartesianCoordinate();
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count, count2);
+
+        testco = SphericCoordinate.getSphericCoordinateObject(0.2*Math.PI, 0.6*Math.PI, 20000);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        CartesianCoordinate testco2 = CartesianCoordinate.getCartesianCoordinateObject(-3632.712640, 11180.339887, 16180.339887);
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count, count2);
+        testco.asCartesianCoordinate();
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count2, count);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        testco2.asSphericCoordinate();
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count, count2);
+
+        CartesianCoordinate car_cord = CartesianCoordinate.getCartesianCoordinateObject(-20.532, -56.222, 200002);
+        count = AbstractCoordinate.getNumberCoordinateElements();
+        testco = car_cord.asSphericCoordinate();
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count, count2);
+        CartesianCoordinate car_cord2 = testco.asCartesianCoordinate();
+        count2 = AbstractCoordinate.getNumberCoordinateElements();
+        assertEquals(count, count2);
+        assertEquals(car_cord.getYCoordinate(),car_cord2.getYCoordinate(),tolerance);
+        assertEquals(car_cord.getYCoordinate(),car_cord2.getYCoordinate(),tolerance);
+        assertEquals(car_cord.getZCoordinate(),car_cord2.getZCoordinate(),tolerance);
+    }
+    @Test
     public void testCoordinateBasicMethods() {
-        CartesianCoordinate testco = new CartesianCoordinate(1.0, 4.0, 8.1);
+        CartesianCoordinate testco = CartesianCoordinate.getCartesianCoordinateObject(1.0, 4.0, 8.1);
         double[] exp = new double[3];
         exp[0] = 1.0;
         exp[1] = 4.0;
@@ -57,7 +111,7 @@ public class LocationTest {
         act[2] = testco.getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
-        SphericCoordinate testco2 = new SphericCoordinate(0.5 * Math.PI, 0.5 * Math.PI, 80000);
+        SphericCoordinate testco2 = SphericCoordinate.getSphericCoordinateObject(0.5 * Math.PI, 0.5 * Math.PI, 80000);
         exp[0] = 0.5 * Math.PI;
         exp[1] = 0.5 * Math.PI;
         exp[2] = 80000;
@@ -76,7 +130,7 @@ public class LocationTest {
         act[2] = testco2_car.getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
-        testco2 = new SphericCoordinate(0.2 * Math.PI, 0.6 * Math.PI, 20000);
+        testco2 = SphericCoordinate.getSphericCoordinateObject(0.2 * Math.PI, 0.6 * Math.PI, 20000);
         exp[0] = 0.2 * Math.PI;
         exp[1] = 0.6 * Math.PI;
         exp[2] = 20000;
@@ -105,11 +159,11 @@ public class LocationTest {
         act[2] = testco_sphe.getRadius();
         assertArrayEquals(exp, act, tolerance);
 
-        testco = new CartesianCoordinate(0, 0, 0);
+        testco = CartesianCoordinate.getCartesianCoordinateObject(0, 0, 0);
         testco_sphe = testco.asSphericCoordinate();
         assertTrue(testco.equals(testco_sphe));
 
-        testco = new CartesianCoordinate(0, 1, 0);
+        testco = CartesianCoordinate.getCartesianCoordinateObject(0, 1, 0);
         testco_sphe = testco.asSphericCoordinate();
         assertTrue(testco.equals(testco_sphe));
 
@@ -132,7 +186,7 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        CartesianCoordinate testco = new CartesianCoordinate(-1.0, 4.0, 8.1);
+        CartesianCoordinate testco = CartesianCoordinate.getCartesianCoordinateObject(-1.0, 4.0, 8.1);
         testloc5 = new Location(testco);
         double[] exp = new double[3];
         exp[0] = -1.0;
@@ -145,7 +199,7 @@ public class LocationTest {
         act[2] = testloc5.getCartesianCoordinate().getZCoordinate();
         assertArrayEquals(exp, act, tolerance);
 
-        SphericCoordinate testco_ph = new SphericCoordinate(Math.PI, 0, 20000);
+        SphericCoordinate testco_ph = SphericCoordinate.getSphericCoordinateObject(Math.PI, 0, 20000);
         testloc7 = new Location(testco_ph);
 
         exp[0] = 0;
@@ -203,7 +257,7 @@ public class LocationTest {
         assertEquals(testloc4.getCartesianCoordinate().getYCoordinate(), y, tolerance);
         assertEquals(testloc4.getCartesianCoordinate().getZCoordinate(), z, tolerance);
 
-        SphericCoordinate cord_sph = new SphericCoordinate(0, Math.PI, 10000);
+        SphericCoordinate cord_sph = SphericCoordinate.getSphericCoordinateObject(0, Math.PI, 10000);
         testloc8 = new Location(cord_sph);
         loc_id = testloc8.getID();
         st = LocationManager.getInstance().getStatement();
@@ -235,7 +289,7 @@ public class LocationTest {
         assertEquals(testloc4.getCartesianCoordinate().getZCoordinate(),z, tolerance);
 
         // Test for setCoordinate with CartesianCoordinate
-        CartesianCoordinate test_cord = new CartesianCoordinate(19.00,04.05, 19.94);
+        CartesianCoordinate test_cord = CartesianCoordinate.getCartesianCoordinateObject(19.00,04.05, 19.94);
         loc_id = testloc4.getID();
         testloc4.setCoordinate(test_cord);
         st2 = LocationManager.getInstance().getStatement();
@@ -260,7 +314,7 @@ public class LocationTest {
 
     @Test
     public void testPhotoLocation() throws SQLException {
-        CartesianCoordinate testco = new CartesianCoordinate(-1.0, -231.0, 8.1);
+        CartesianCoordinate testco = CartesianCoordinate.getCartesianCoordinateObject(-1.0, -231.0, 8.1);
         testloc = new Location(testco);
         Photo testphoto = new Photo();
         testphoto.setLocation(testloc);
@@ -291,7 +345,7 @@ public class LocationTest {
     @Test
     public void testDistance() {
         // Test distance with CartesianCoordinate
-        CartesianCoordinate c1 = new CartesianCoordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c1 = CartesianCoordinate.getCartesianCoordinateObject(2.0, 1.0, 4.0);
         try {
             c1.getCartesianDistance(null);
             fail("null isn't regcognized");
@@ -299,36 +353,36 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        CartesianCoordinate c2 = new CartesianCoordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c2 = CartesianCoordinate.getCartesianCoordinateObject(2.0, 1.0, 4.0);
         assertEquals(0.0, c1.getCartesianDistance(c2), tolerance);
 
-        CartesianCoordinate c3 = new CartesianCoordinate(0.0, 0.0, 0.0);
-        CartesianCoordinate c4 = new CartesianCoordinate(0.0, 0.0, 0.0);
+        CartesianCoordinate c3 = CartesianCoordinate.getCartesianCoordinateObject(0.0, 0.0, 0.0);
+        CartesianCoordinate c4 = CartesianCoordinate.getCartesianCoordinateObject(0.0, 0.0, 0.0);
         assertEquals(0.0, c3.getCartesianDistance(c4), tolerance);
 
-        CartesianCoordinate c5 = new CartesianCoordinate(-2.0, 1.0, 4.0);
+        CartesianCoordinate c5 = CartesianCoordinate.getCartesianCoordinateObject(-2.0, 1.0, 4.0);
         assertEquals(4.0, c1.getCartesianDistance(c5), tolerance);
 
-        CartesianCoordinate c6 = new CartesianCoordinate(400.268, 267.978, 567.987);
-        CartesianCoordinate c7 = new CartesianCoordinate(76.5879, 0.7856, 1.0976);
+        CartesianCoordinate c6 = CartesianCoordinate.getCartesianCoordinateObject(400.268, 267.978, 567.987);
+        CartesianCoordinate c7 = CartesianCoordinate.getCartesianCoordinateObject(76.5879, 0.7856, 1.0976);
         assertEquals(705.3539378, c6.getCartesianDistance(c7), tolerance);
 
         // Test distance with SphericCoordinate
-        SphericCoordinate cs1 = new SphericCoordinate(0, 1.5 * Math.PI, 14000);
-        SphericCoordinate cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14000);
+        SphericCoordinate cs1 = SphericCoordinate.getSphericCoordinateObject(0, 1.5 * Math.PI, 14000);
+        SphericCoordinate cs2 = SphericCoordinate.getSphericCoordinateObject(0, 1.5 * Math.PI, 14000);
         assertEquals(0.0, cs1.getCartesianDistance(cs2), tolerance);
 
-        SphericCoordinate cs3 = new SphericCoordinate(0.5 * Math.PI, 1.8 * Math.PI, 14000);
+        SphericCoordinate cs3 = SphericCoordinate.getSphericCoordinateObject(0.5 * Math.PI, 1.8 * Math.PI, 14000);
         assertEquals(19798.989873, cs3.getCartesianDistance(cs2), tolerance);
     }
 
     @Test
     public void testCentralAngle() {
-        SphericCoordinate cs1 = new SphericCoordinate(0, 1.5 * Math.PI, 14000);
-        SphericCoordinate cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14020);
+        SphericCoordinate cs1 = SphericCoordinate.getSphericCoordinateObject(0, 1.5 * Math.PI, 14000);
+        SphericCoordinate cs2 = SphericCoordinate.getSphericCoordinateObject(0, 1.5 * Math.PI, 14020);
         assertEquals(0.0, cs1.getCentralAngle(cs2), tolerance);
 
-        cs2 = new SphericCoordinate(0, 1.5 * Math.PI, 14200);
+        cs2 = SphericCoordinate.getSphericCoordinateObject(0, 1.5 * Math.PI, 14200);
         try {
             assertEquals(0.0, cs1.getCentralAngle(cs2), tolerance);
             fail("different radius should fail");
@@ -336,14 +390,14 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        SphericCoordinate cs3 = new SphericCoordinate(Math.PI, 1.25 * Math.PI, 14000);
+        SphericCoordinate cs3 = SphericCoordinate.getSphericCoordinateObject(Math.PI, 1.25 * Math.PI, 14000);
         assertEquals(Math.PI, cs1.getCentralAngle(cs3), tolerance);
     }
 
     @Test
     public void testIsEqual() {
 
-        CartesianCoordinate c1 = new CartesianCoordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c1 = CartesianCoordinate.getCartesianCoordinateObject(2.0, 1.0, 4.0);
         try {
             c1.getCartesianDistance(null);
             fail("null isn't regcognized");
@@ -351,28 +405,28 @@ public class LocationTest {
             assertTrue(true);
         }
 
-        CartesianCoordinate c2 = new CartesianCoordinate(2.0, 1.0, 4.0);
+        CartesianCoordinate c2 = CartesianCoordinate.getCartesianCoordinateObject(2.0, 1.0, 4.0);
         assertTrue(c1.equals(c2));
 
         assertFalse(c1.equals(null));
 
-        CartesianCoordinate c3 = new CartesianCoordinate(-2.0, 1.0, 4.0);
+        CartesianCoordinate c3 = CartesianCoordinate.getCartesianCoordinateObject(-2.0, 1.0, 4.0);
         assertFalse(c1.equals(c3));
 
-        CartesianCoordinate c4 = new CartesianCoordinate(2.0, 1.00000001, 4.0);
+        CartesianCoordinate c4 = CartesianCoordinate.getCartesianCoordinateObject(2.0, 1.00000001, 4.0);
         assertTrue(c4.equals(c1));
 
-        SphericCoordinate cs1 = new SphericCoordinate(0.5 * Math.PI, 0.5 * Math.PI, 10000);
-        c2 = new CartesianCoordinate(0, 10000, 0);
+        SphericCoordinate cs1 = SphericCoordinate.getSphericCoordinateObject(0.5 * Math.PI, 0.5 * Math.PI, 10000);
+        c2 = CartesianCoordinate.getCartesianCoordinateObject(0, 10000, 0);
         assertTrue(cs1.equals(c2));
         assertTrue(c2.equals(cs1));
 
-        cs1 = new SphericCoordinate(0.6 * Math.PI, 0.5 * Math.PI, 10000);
+        cs1 = SphericCoordinate.getSphericCoordinateObject(0.6 * Math.PI, 0.5 * Math.PI, 10000);
         assertFalse(cs1.equals(c2));
 
-        cs1 = new SphericCoordinate(0.2 * Math.PI, 0.6 * Math.PI, 20000);
+        cs1 = SphericCoordinate.getSphericCoordinateObject(0.2 * Math.PI, 0.6 * Math.PI, 20000);
 
-        c2 = new CartesianCoordinate(-3632.712640, 11180.339887, 16180.339887);
+        c2 = CartesianCoordinate.getCartesianCoordinateObject(-3632.712640, 11180.339887, 16180.339887);
         assertTrue(cs1.equals(c2));
         assertTrue(c2.equals(cs1));
     }

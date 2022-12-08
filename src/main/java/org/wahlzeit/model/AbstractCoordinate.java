@@ -4,9 +4,13 @@ import java.util.Objects;
 
 import java.lang.Math;
 
+
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class AbstractCoordinate implements Coordinate {
     private static final double radius_tolerance = 0.005;
-
+    protected static final Map<Integer, CartesianCoordinate> coordinateMap = new HashMap<Integer, CartesianCoordinate>();
     /*
      * Precondition: Argument not null
      */
@@ -84,7 +88,7 @@ public abstract class AbstractCoordinate implements Coordinate {
         return Objects.hash(rounded[0], rounded[1], rounded[2]);
     }
 
-    private double[] roundCoordinates() {
+    protected double[] roundCoordinates() {
         double[] new_cord = new double[3];
         double x_new = asCartesianCoordinate().getXCoordinate();
         double y_new = asCartesianCoordinate().getYCoordinate();
@@ -107,6 +111,10 @@ public abstract class AbstractCoordinate implements Coordinate {
                 .asSphericCoordinate().getRadius() < c2.asSphericCoordinate().getRadius() * (1 - radius_tolerance)) {
             throw new IllegalArgumentException("radius has to be similar at both Coordinates");
         }
+    }
+
+    public static int getNumberCoordinateElements(){
+        return coordinateMap.size();
     }
 
 }

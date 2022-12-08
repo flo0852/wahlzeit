@@ -32,7 +32,7 @@ public class Location extends DataObject {
 
     // alternative Constructor
     public Location(double cx, double cy, double cz){
-        cord = new CartesianCoordinate(cx, cy, cz);
+        cord = CartesianCoordinate.getCartesianCoordinateObject(cx, cy, cz);
         try {
             id = LocationManager.getInstance().insertData(cord.asCartesianCoordinate()); // 1. Try
         } catch (SQLException sql_e1) {
@@ -99,8 +99,7 @@ public class Location extends DataObject {
         double cx = rset.getDouble("x_coordinate");
         double cy = rset.getDouble("y_coordinate");
         double cz = rset.getDouble("Z_coordinate");
-        cord = new CartesianCoordinate(cx, cy, cz);
-
+        cord = CartesianCoordinate.getCartesianCoordinateObject(cx, cy, cz);
     }
 
     @Override
