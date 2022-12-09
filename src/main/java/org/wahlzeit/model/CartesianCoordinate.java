@@ -74,31 +74,4 @@ public class CartesianCoordinate extends AbstractCoordinate {
         }
         return true;
     }
-
-    /*
-     * Precondition: Argument not null
-     */
-    protected boolean doIsEqual(CartesianCoordinate c) {
-        // Preconditions
-        assertIsNonNullArgument(c);
-
-        // Method Code
-        double tolerance = 0.000001;
-        if (c == null) {
-            return false;
-        }
-        if (c.getXCoordinate() > (x + tolerance) || c.getXCoordinate() < (x - tolerance)) {
-            return false;
-        }
-
-        if (c.getYCoordinate() > (y + tolerance) || c.getYCoordinate() < (y - tolerance)) {
-            return false;
-        }
-
-        if (c.getZCoordinate() > (z + tolerance) || c.getZCoordinate() < (z - tolerance)) {
-            return false;
-        }
-        return true;
-    }
-
 }

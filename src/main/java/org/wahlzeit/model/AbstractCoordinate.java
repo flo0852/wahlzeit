@@ -65,39 +65,14 @@ public abstract class AbstractCoordinate implements Coordinate {
         }
         if (o.getClass() == Coordinate.class || o.getClass() == CartesianCoordinate.class
                 || o.getClass() == SphericCoordinate.class) {
-            return isEqual((Coordinate) o);
+            return this.hashCode() == ((Coordinate) o).hashCode();
         }
         return false;
     }
 
-    /*
-     * Precondition: Argument not null
-     */
-    @Override
-    public boolean isEqual(Coordinate c) {
-        // Preconditions
-        assertIsNonNullArgument(c);
-
-        // Method Code
-        return asCartesianCoordinate().doIsEqual(c.asCartesianCoordinate());
-    }
-
     @Override
     public int hashCode() {
-        double[] rounded = roundCoordinates();
-        return Objects.hash(rounded[0], rounded[1], rounded[2]);
-    }
-
-    protected double[] roundCoordinates() {
-        double[] new_cord = new double[3];
-        double x_new = asCartesianCoordinate().getXCoordinate();
-        double y_new = asCartesianCoordinate().getYCoordinate();
-        double z_new = asCartesianCoordinate().getZCoordinate();
-        double d = Math.pow(10, 6);
-        new_cord[0] = Math.round(x_new * d) / d;
-        new_cord[1] = Math.round(y_new * d) / d;
-        new_cord[2] = Math.round(z_new * d) / d;
-        return new_cord;
+        return Objects.hash(asCartesianCoordinate().getXCoordinate(),asCartesianCoordinate().getYCoordinate(),asCartesianCoordinate().getZCoordinate());
     }
 
     protected static void assertIsNonNullArgument(Object argument) {
