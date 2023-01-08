@@ -14,6 +14,19 @@ import org.wahlzeit.utils.*;
 /**
  * A photo represents a user-provided (uploaded) photo.
  */
+@PatternInstance(
+	patternName = "Abstract Factory", 
+	participants = {
+		"AbstractProduct",
+		"ConcreteProduct1"
+	}
+)
+@PatternInstance(
+	patternName = "Decorator", 
+	participants = {
+		"ConcreteComponent1" 
+	}
+)
 public class Photo extends DataObject {
 
 	/**
@@ -33,7 +46,7 @@ public class Photo extends DataObject {
 	public static final String STATUS = "status";
 	public static final String IS_INVISIBLE = "isInvisible";
 	public static final String UPLOADED_ON = "uploadedOn";
-	
+
 	/**
 	 * 
 	 */
@@ -41,12 +54,12 @@ public class Photo extends DataObject {
 	public static final int MAX_PHOTO_HEIGHT = 600;
 	public static final int MAX_THUMB_PHOTO_WIDTH = 105;
 	public static final int MAX_THUMB_PHOTO_HEIGHT = 150;
-	
+
 	/**
 	 * 
 	 */
 	protected PhotoId id = null;
-	
+
 	/**
 	 * 
 	 */
@@ -60,14 +73,14 @@ public class Photo extends DataObject {
 	protected EmailAddress ownerEmailAddress = EmailAddress.EMPTY;
 	protected Language ownerLanguage = Language.ENGLISH;
 	protected URL ownerHomePage;
-	
+
 	/**
 	 * 
 	 */
 	protected int width;
 	protected int height;
 	protected PhotoSize maxPhotoSize = PhotoSize.MEDIUM; // derived
-	
+
 	/**
 	 * 
 	 */
@@ -83,18 +96,18 @@ public class Photo extends DataObject {
 	 * 
 	 */
 	protected PhotoStatus status = PhotoStatus.VISIBLE;
-	
+
 	/**
 	 * 
 	 */
 	protected int praiseSum = 10;
 	protected int noVotes = 1;
-	
+
 	/**
 	 * 
 	 */
 	protected long creationTime = System.currentTimeMillis();
-	
+
 	/**
 	 * 
 	 */
@@ -102,17 +115,17 @@ public class Photo extends DataObject {
 		id = PhotoId.getNextId();
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype constructor
 	 */
 	public Photo(PhotoId myId) {
 		id = myId;
-		
+
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype constructor
@@ -128,7 +141,7 @@ public class Photo extends DataObject {
 	public String getIdAsString() {
 		return String.valueOf(id.asInt());
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -137,7 +150,7 @@ public class Photo extends DataObject {
 
 		ownerId = rset.getInt("owner_id");
 		ownerName = rset.getString("owner_name");
-		
+
 		ownerNotifyAboutPraise = rset.getBoolean("owner_notify_about_praise");
 		ownerEmailAddress = EmailAddress.getFromString(rset.getString("owner_email_address"));
 		ownerLanguage = Language.getFromInt(rset.getInt("owner_language"));
@@ -158,7 +171,7 @@ public class Photo extends DataObject {
 
 		location_id = rset.getInt("location_id");
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -177,7 +190,7 @@ public class Photo extends DataObject {
 		rset.updateInt("praise_sum", praiseSum);
 		rset.updateInt("no_votes", noVotes);
 		rset.updateLong("creation_time", creationTime);
-		if(location != null){
+		if (location != null) {
 			rset.updateInt("location_id", location.getID());
 		}
 
@@ -189,7 +202,7 @@ public class Photo extends DataObject {
 	public void writeId(PreparedStatement stmt, int pos) throws SQLException {
 		stmt.setInt(pos, id.asInt());
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -197,7 +210,7 @@ public class Photo extends DataObject {
 	public PhotoId getId() {
 		return id;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -205,7 +218,7 @@ public class Photo extends DataObject {
 	public int getOwnerId() {
 		return ownerId;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -214,7 +227,7 @@ public class Photo extends DataObject {
 		ownerId = newId;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -222,7 +235,7 @@ public class Photo extends DataObject {
 	public String getOwnerName() {
 		return ownerName;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -231,7 +244,7 @@ public class Photo extends DataObject {
 		ownerName = newName;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -255,7 +268,7 @@ public class Photo extends DataObject {
 	public boolean getOwnerNotifyAboutPraise() {
 		return ownerNotifyAboutPraise;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -272,7 +285,7 @@ public class Photo extends DataObject {
 	public EmailAddress getOwnerEmailAddress() {
 		return ownerEmailAddress;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -288,7 +301,7 @@ public class Photo extends DataObject {
 	public Language getOwnerLanguage() {
 		return ownerLanguage;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -304,7 +317,7 @@ public class Photo extends DataObject {
 	public URL getOwnerHomePage() {
 		return ownerHomePage;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -313,7 +326,7 @@ public class Photo extends DataObject {
 		ownerHomePage = newHomePage;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype boolean-query
@@ -329,7 +342,7 @@ public class Photo extends DataObject {
 	public boolean isWiderThanHigher() {
 		return (height * MAX_PHOTO_WIDTH) < (width * MAX_PHOTO_HEIGHT);
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -337,7 +350,7 @@ public class Photo extends DataObject {
 	public int getWidth() {
 		return width;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -345,7 +358,7 @@ public class Photo extends DataObject {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -353,7 +366,7 @@ public class Photo extends DataObject {
 	public int getThumbWidth() {
 		return isWiderThanHigher() ? MAX_THUMB_PHOTO_WIDTH : (width * MAX_THUMB_PHOTO_HEIGHT / height);
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -361,7 +374,7 @@ public class Photo extends DataObject {
 	public int getThumbHeight() {
 		return isWiderThanHigher() ? (height * MAX_THUMB_PHOTO_WIDTH / width) : MAX_THUMB_PHOTO_HEIGHT;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -374,7 +387,7 @@ public class Photo extends DataObject {
 
 		incWriteCount();
 	}
-	
+
 	/**
 	 * Can this photo satisfy provided photo size?
 	 * 
@@ -383,7 +396,7 @@ public class Photo extends DataObject {
 	public boolean hasPhotoSize(PhotoSize size) {
 		return maxPhotoSize.asInt() >= size.asInt();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -391,7 +404,7 @@ public class Photo extends DataObject {
 	public PhotoSize getMaxPhotoSize() {
 		return maxPhotoSize;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -399,7 +412,7 @@ public class Photo extends DataObject {
 	public double getPraise() {
 		return (double) praiseSum / noVotes;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -407,7 +420,7 @@ public class Photo extends DataObject {
 	public String getPraiseAsString(ModelConfig cfg) {
 		return cfg.asPraiseString(getPraise());
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -416,7 +429,7 @@ public class Photo extends DataObject {
 		noVotes += 1;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype boolean-query
@@ -424,7 +437,7 @@ public class Photo extends DataObject {
 	public boolean isVisible() {
 		return status.isDisplayable();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -432,7 +445,7 @@ public class Photo extends DataObject {
 	public PhotoStatus getStatus() {
 		return status;
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype set
@@ -441,7 +454,7 @@ public class Photo extends DataObject {
 		status = newStatus;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype boolean-query
@@ -449,7 +462,7 @@ public class Photo extends DataObject {
 	public boolean hasTag(String tag) {
 		return tags.hasTag(tag);
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -466,7 +479,7 @@ public class Photo extends DataObject {
 		tags = newTags;
 		incWriteCount();
 	}
-	
+
 	/**
 	 * 
 	 * @methodtype get
@@ -479,30 +492,27 @@ public class Photo extends DataObject {
 	 * 
 	 * @methodtype get
 	 */
-	public Location getLocation(){
-		if(location_id == -1){
+	public Location getLocation() {
+		if (location_id == -1) {
 			return null;
 		}
-		if(location == null){
+		if (location == null) {
 			try {
-				Location loc = LocationManager.getInstance().getLocationFromID(location_id); //1. Try
+				Location loc = LocationManager.getInstance().getLocationFromID(location_id); // 1. Try
 				return loc;
 			} catch (SQLException sex) {
 				SysLog.logSysInfo("SQL Error: " + sex.getErrorCode() + " Trying again - getLocation");
-				try{
-					Location loc = LocationManager.getInstance().getLocationFromID(location_id); //2. Try
+				try {
+					Location loc = LocationManager.getInstance().getLocationFromID(location_id); // 2. Try
 					return loc;
-				}
-				catch(SQLException sex2){
+				} catch (SQLException sex2) {
 					SysLog.logSysError("SQL Error: " + sex.getErrorCode() + " - getLocation");
 					return null;
-				}
-				catch(IllegalArgumentException illex){
+				} catch (IllegalArgumentException illex) {
 					SysLog.logSysInfo("ID: " + location_id + " not found - getLocation");
 					return null;
 				}
-			}
-			catch(IllegalArgumentException illex){
+			} catch (IllegalArgumentException illex) {
 				SysLog.logSysInfo("ID: " + location_id + " not found - getLocation");
 				return null;
 			}
@@ -514,7 +524,7 @@ public class Photo extends DataObject {
 	 * 
 	 * @methodtype set
 	 */
-	public void setLocation(Location loc){
+	public void setLocation(Location loc) {
 		location = loc;
 		location_id = loc.getID();
 		incWriteCount();

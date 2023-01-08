@@ -8,6 +8,12 @@ import java.lang.Math;
 import java.util.HashMap;
 import java.util.Map;
 
+@PatternInstance(
+	patternName = "Flyweight",
+	participants = {
+		"Flyweight"
+	}
+)
 public abstract class AbstractCoordinate implements Coordinate {
     private static final double radius_tolerance = 0.005;
     protected static final Map<Integer, CartesianCoordinate> coordinateMap = new HashMap<Integer, CartesianCoordinate>();

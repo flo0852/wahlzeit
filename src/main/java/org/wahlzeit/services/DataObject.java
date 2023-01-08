@@ -5,10 +5,18 @@
 
 package org.wahlzeit.services;
 
+import org.wahlzeit.model.PatternInstance;
+
 /**
  * A simple abstract implementation of Persistent with write count and dirty bit.
  * Also defines (but does not use) the field "ID" for subclass use.
  */
+@PatternInstance(
+	patternName = "Decorator", 
+	participants = { 
+		"Component"
+	}
+)
 public abstract class DataObject implements Persistent {
 	
 	/**

@@ -2,6 +2,18 @@ package org.wahlzeit.model;
 
 import java.sql.*;
 
+@PatternInstance(
+	patternName = "Abstract Factory",
+	participants = {
+		"ConcreteProduct2"
+	}
+)
+@PatternInstance(
+	patternName = "Decorator", 
+	participants = { 
+		"ConcreteComponent2" 
+	}
+)
 public class SportPhoto extends Photo {
 
     protected String sport;

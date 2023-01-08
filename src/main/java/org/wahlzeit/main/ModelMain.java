@@ -16,6 +16,13 @@ import org.wahlzeit.servlets.AbstractServlet;
 /**
  * A single-threaded Main class with database connection. Can be used by tools that don't want to start a server.
  */
+@org.wahlzeit.model.PatternInstance(
+	patternName = "Chain of Responsibilities", 
+	participants = { 
+		"AbstractHandler",
+		"ConcreteHandler" 
+	}
+)
 public abstract class ModelMain extends AbstractMain {
 	
 	/**

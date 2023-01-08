@@ -12,6 +12,13 @@ import org.wahlzeit.services.*;
 /**
  * A superclass for a Main class for system startup and shutdown.
  */
+@org.wahlzeit.model.PatternInstance(
+	patternName = "Chain of Responsibilities", 
+	participants = { 
+		"AbstractHandler",
+		"ConcreteHandler" 
+	}
+)
 public abstract class AbstractMain {
 	
 	private static final String DB_HOST = Optional.ofNullable(System.getenv("WAHLZEIT_DB_HOST")).orElse("localhost");

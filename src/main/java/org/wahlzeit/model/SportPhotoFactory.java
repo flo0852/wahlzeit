@@ -3,6 +3,18 @@ import org.wahlzeit.services.*;
 
 import java.sql.*;
 
+@PatternInstance(
+	patternName = "Singleton",
+	participants = {
+		"Singleton"
+	}
+)
+@PatternInstance(
+	patternName = "Abstract Factory",
+	participants = {
+		"ConcreteFactory2"
+	}
+)
 public class SportPhotoFactory extends PhotoFactory{
     /**
 	 * Hidden singleton instance; needs to be initialized from the outside.

@@ -2,6 +2,13 @@ package org.wahlzeit.model;
 
 import java.util.Objects;
 
+@PatternInstance(
+	patternName = "Flyweight",
+	participants = {
+		"ConcreteFlyweight",
+        "FlyweightFactory"
+	}
+)
 public class CartesianCoordinate extends AbstractCoordinate {
     private final double x;
     private final double y;

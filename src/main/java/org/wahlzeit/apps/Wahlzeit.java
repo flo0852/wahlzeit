@@ -14,6 +14,10 @@ import org.wahlzeit.services.*;
 /**
  * A simple ServletContextListener to startup and shutdown the Flowers application.
  */
+@org.wahlzeit.model.PatternInstance(
+	patternName = "Chain of Responsibilities",
+	participants = {"Sender"}
+)
 public class Wahlzeit implements ServletContextListener {
 	
 	/**

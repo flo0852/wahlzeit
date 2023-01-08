@@ -7,6 +7,13 @@ import java.sql.SQLException;
 import org.wahlzeit.services.DataObject;
 import org.wahlzeit.services.SysLog;
 
+@PatternInstance(
+	patternName = "Decorator", 
+	participants = { 
+		"Decorator",
+		"ConcreteDecorator" 
+	}
+)
 public class Location extends DataObject {
 
     private Coordinate cord;

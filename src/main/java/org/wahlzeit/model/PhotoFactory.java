@@ -9,9 +9,13 @@ import java.sql.*;
 
 import org.wahlzeit.services.*;
 
-/**
- * An Abstract Factory for creating photos and related objects.
- */
+@PatternInstance(
+	patternName = "Abstract Factory",
+	participants = {
+		"AbstractFactory",
+		"ConcreteFactory1"
+	}
+)
 public class PhotoFactory {
 	
 	/**
