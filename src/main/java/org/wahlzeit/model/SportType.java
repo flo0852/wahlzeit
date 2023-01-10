@@ -19,6 +19,10 @@ public class SportType {
         return new Sport(this,name);
     }
 
+    public Sport createInstance(String sport_name, String[] additionalAttributes, String[] additionalAttributesValues) {
+        return new Sport(this,name, additionalAttributes, additionalAttributesValues);
+    }
+
     public SportType getSuperType() {
         return superType;
     }

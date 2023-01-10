@@ -27,6 +27,13 @@ public class SportManager {
         return sp;
     }
 
+    public Sport createSport(String typename, String sport_name, String[] additionalAttributes, String[] additionalAttributesValues) {
+        SportType st = getSportType(typename);
+        Sport sp = st.createInstance(sport_name, additionalAttributes, additionalAttributesValues);
+        sports.put(sp.getID(), sp);
+        return sp;
+    }
+
     public SportType getSportType(String typename) {
         SportType search = searchSportType(typename);
         if (search == null) {

@@ -2,14 +2,12 @@ package org.wahlzeit.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 public class Sport {
     private static AtomicInteger id_counter;
     public final SportType sport_type;
     public final String name;
-    private int game_duration; // in minutes
     private String[] additionalAttributes; // Attribute Names
-    private String[] additionalAttributesValues;
+    private String[] additionalAttributesValues;  // Attribute Values
 
     public Sport(SportType st, String name) {
         this.sport_type = st;
@@ -17,19 +15,12 @@ public class Sport {
 
     }
 
-    public Sport(SportType st, String name, int game_duration) {
-        this.sport_type = st;
-        this.name = name;
-        this.game_duration = game_duration;
-    }
-
-    public Sport(SportType st, String name, int game_duration, String[] additionalAttributes,
+    public Sport(SportType st, String name, String[] additionalAttributes,
             String[] additionalAttributesValues) {
         assertIsNonNullArgument(st, "SportType - Sport Constructor");
         assertIsSameLength(additionalAttributes, additionalAttributesValues);
         this.sport_type = st;
         this.name = name;
-        this.game_duration = game_duration;
         this.additionalAttributes = additionalAttributes;
         this.additionalAttributesValues = additionalAttributesValues;
     }
@@ -44,10 +35,6 @@ public class Sport {
 
     public String getName() {
         return name;
-    }
-
-    public int getDuration() {
-        return game_duration;
     }
 
     public String getSpecificAdditionalAttribute(String attribute_name) {
@@ -68,10 +55,6 @@ public class Sport {
 
     public String[] getAdditionalAttributesValues() {
         return this.additionalAttributesValues;
-    }
-
-    public void setDuration(int game_duration) {
-        this.game_duration = game_duration;
     }
 
     public void setSpecificAdditionalAttribute(String attribute_name, String value) {
