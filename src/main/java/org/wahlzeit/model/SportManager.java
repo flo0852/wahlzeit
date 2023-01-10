@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SportManager {
-    protected static final SportManager instance = new SportManager();
+    private static final SportManager instance = new SportManager();
 
     private Set<SportType> rootTypes = new HashSet<SportType>();
-    protected Map<Integer, Sport> sports = new HashMap<Integer, Sport>();
+    private Map<Integer, Sport> sports = new HashMap<Integer, Sport>();
 
     public static final SportManager getInstance() {
         return instance;
@@ -37,7 +37,7 @@ public class SportManager {
         return search;
     }
 
-    private SportType searchSportType(String typename) {
+    protected SportType searchSportType(String typename) {
         if (rootTypes.size() > 0) {
             for (SportType type : rootTypes) {
                 SportType result = type.hasSportType(typename);
@@ -55,6 +55,10 @@ public class SportManager {
             throw new IllegalArgumentException("type already existing in: " + result.getSuperType().name);
         }
 
+    }
+
+    protected void removeRoot(SportType root){
+        rootTypes.remove(root);
     }
 
 }

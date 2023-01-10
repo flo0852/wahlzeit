@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class SportType {
 
-    public final SportType superType;
+    private SportType superType;
     public final String name;
-    protected Set<SportType> subTypes = new HashSet<SportType>();
+    private Set<SportType> subTypes = new HashSet<SportType>();
 
     public SportType(SportType superType, String name) {
         this.superType = superType;
@@ -64,7 +64,31 @@ public class SportType {
         return hasSportType(subType.name) != null;
     }
 
-    protected void assertIsNonNullArgument(Object arg, String label) {
+
+    public void changeSuperType(SportType newSuperType){
+        assertExistingSportType(newSuperType);
+        if(superType == null){
+            SportManager.getInstance().removeRoot(newSuperType);
+        }
+        else{
+            superType.removeSubType(this);
+        }
+        superType = newSuperType;
+    }
+
+    private void removeSubType(SportType type){
+        subTypes.remove(type);
+    }
+
+    private void assertExistingSportType(SportType type){
+        assertIsNonNullArgument(type, "SportType - assertExistingSportType()");
+        if(SportManager.getInstance().searchSportType(type.name) == null){
+            throw new IllegalArgumentException("SportType - assertExistingSportType() should exist");
+        }
+    }
+
+
+    private void assertIsNonNullArgument(Object arg, String label) {
         if (arg == null) {
             throw new IllegalArgumentException(label + " should not be null");
         }
