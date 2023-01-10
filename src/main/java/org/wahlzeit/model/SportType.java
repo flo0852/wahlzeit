@@ -28,7 +28,7 @@ public class SportType {
     }
 
     public void newSubType(String name) {
-        //SportManager.assertNoDuplicate(name);
+        SportManager.getInstance().assertNoDuplicate(name);
         SportType newSubType = new SportType(this, name);
         subTypes.add(newSubType);
     }

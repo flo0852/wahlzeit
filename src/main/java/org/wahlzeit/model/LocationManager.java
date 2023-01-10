@@ -26,7 +26,7 @@ public class LocationManager extends ObjectManager {
         return instance;
     }
 
-    public LocationManager() {
+    private LocationManager() {
 
     }
 
