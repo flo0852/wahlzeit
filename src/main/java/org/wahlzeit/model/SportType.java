@@ -58,4 +58,15 @@ public class SportType {
         }
         return null;
     }
+
+    public boolean isSubtype(SportType subType){
+        assertIsNonNullArgument("sub", "SportType - isSubtype()");
+        return hasSportType(subType.name) != null;
+    }
+
+    protected void assertIsNonNullArgument(Object arg, String label) {
+        if (arg == null) {
+            throw new IllegalArgumentException(label + " should not be null");
+        }
+    }
 }
