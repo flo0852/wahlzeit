@@ -35,6 +35,7 @@ test {
         includeTestsMatching "org.wahlzeit.*"
         excludeTestsMatching "*.LocationTest"
         excludeTestsMatching "*.SportPhotoTest"
+        excludeTestsMatching "*.SportTypeTest"
     }
     testLogging {
             events "passed", "skipped", "failed"

@@ -238,16 +238,6 @@ public class SportManager extends ObjectManager {
         return newS;
     }
 
-    // public SportType getSportType(String typename) {
-    // SportType search = searchSportType(typename);
-    // if (search == null) {
-    // SportType res = new SportType(null, typename);
-    // rootTypes.add(res);
-    // return res;
-    // }
-    // return search;
-    // }
-
     protected SportType searchSportType(String typename) { // auch in Datenbank schauen
         if (rootTypes.size() > 0) {
             for (SportType type : rootTypes) {
