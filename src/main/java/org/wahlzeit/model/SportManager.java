@@ -193,7 +193,7 @@ public class SportManager extends ObjectManager {
         }
     }
 
-    protected int insertData(SportType sportType) throws SQLException { // TODO: weitere Attribute einfuegen
+    protected int insertData(SportType sportType) throws SQLException {
         assertIsNonNullArgument(sportType, "SportType Object - insertData");
         DatabaseConnection dbcon = getDatabaseConnection();
         Connection con = dbcon.getRdbmsConnection();
@@ -210,7 +210,7 @@ public class SportManager extends ObjectManager {
         return id;
     }
 
-    protected int tryInsertAgain(SportType sportType) throws SQLException { // TODO: auf Sport ändern
+    protected int tryInsertAgain(SportType sportType) throws SQLException {
         assertIsNonNullArgument(sportType, "SportType Object - tryInsertAgain");
         Statement st = getStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM sportTypes WHERE id = " + current_id_sportTypes);
@@ -257,12 +257,13 @@ public class SportManager extends ObjectManager {
     protected void createNewSportTypeTable(SportType sportType) throws SQLException {
         Statement stmt = getStatement();
         String sqlQuery = "CREATE TABLE " + sportType.getName() + "_sportType " + "(id INTEGER not NULL, "
-                + "name TEXT not NULL, ";
+                + "name TEXT not NULL, " + "sportType_id INTEGER, ";
         String[] attr = sportType.getAttributes();
         for (int i = 0; i < attr.length; i++) {
             sqlQuery += attr[i] + " TEXT, ";
         }
         sqlQuery += "CONSTRAINT uniName UNIQUE(name), " + "PRIMARY KEY (id))";
+        stmt.executeUpdate(sqlQuery);
     }
 
     protected void assertIsValidID(int id) {

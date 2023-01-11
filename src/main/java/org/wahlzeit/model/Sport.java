@@ -14,8 +14,8 @@ public class Sport extends DataObject { // TODO: Getter und Setter
                          // Cache private SportType sport_type;
     private String name;
     private SportType sport_type;
-    private String[] additionalAttributes; // Attribute Names
-    private String[] additionalAttributesValues; // Attribute Values
+    private int sportType_id;
+    private String[] additionalAttributes;
 
     public Sport(ResultSet rSet) throws SQLException {
         assertIsNonNullArgument(rSet, "ResultSet Object - Sport Constructor");
@@ -32,31 +32,13 @@ public class Sport extends DataObject { // TODO: Getter und Setter
         }
     }
 
-    public Sport(SportType st, String name) {
+    public Sport(SportType st, String name, String[] additionalAttributes) {
         assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
         assertIsNonNullArgument(name, "String Obect - Sport Constructor");
         this.sport_type = st;
+        this.sportType_id = st.getID();
         this.name = name;
-
-        try {
-            id = SportManager.getInstance().insertData(this); // 1. Try
-        } catch (SQLException sql_e1) {
-            try {
-                SysLog.logSysInfo("insertData at Sport Constructor failed, trying again");
-                id = SportManager.getInstance().tryInsertAgain(this); // 2. Try
-            } catch (SQLException sql_e2) {
-                SysLog.logSysInfo("insertData at Sport Constructor finally failed, adding in Sport Cache");
-                id = SportManager.getInstance().alternativeSave(this);
-            }
-        }
-    }
-
-    public Sport(SportType st, String name, String[] additionalAttributes, // TODO: Additional Attributes in Database
-            String[] additionalAttributesValues) {
-        assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
-        assertIsNonNullArgument(name, "String Obect - Sport Constructor");
-        this.sport_type = st;
-        this.name = name;
+        this.additionalAttributes = additionalAttributes;
 
         try {
             id = SportManager.getInstance().insertData(this); // 1. Try
@@ -79,40 +61,29 @@ public class Sport extends DataObject { // TODO: Getter und Setter
         return sport_type;
     }
 
-    public void setType(SportType sportType) {
-        assertIsNonNullArgument(sportType, "sportType - setType");
-        this.sport_type = sportType;
-        incWriteCount();
-        SportManager.getInstance().update(this);
-    }
-
     public String getName() {
         return name;
     }
 
     public String getSpecificAdditionalAttribute(String attribute_name) {
         int index = getIndex(attribute_name);
-        return additionalAttributesValues[index];
+        return additionalAttributes[index];
     }
 
     public String getSpecificAdditionalAttribute(int index) {
         if (additionalAttributes.length >= index) {
             throw new IllegalArgumentException("Not a valid index");
         }
-        return additionalAttributesValues[index];
+        return additionalAttributes[index];
     }
 
     public String[] getAdditionalAttributes() {
         return this.additionalAttributes;
     }
 
-    public String[] getAdditionalAttributesValues() {
-        return this.additionalAttributesValues;
-    }
-
     public void setSpecificAdditionalAttribute(String attribute_name, String value) {
         int index = getIndex(attribute_name);
-        additionalAttributesValues[index] = value;
+        additionalAttributes[index] = value;
     }
 
     public void setSpecificAdditionalAttribute(int index, String value) {
@@ -124,8 +95,9 @@ public class Sport extends DataObject { // TODO: Getter und Setter
     }
 
     private int getIndex(String attribute_name) {
-        for (int i = 0; i < additionalAttributes.length; i++) {
-            if (additionalAttributes[i] == attribute_name) {
+        String[] attr = sport_type.getAttributes();
+        for (int i = 0; i < attr.length; i++) {
+            if (attr[i] == attribute_name) {
                 return i;
             }
         }
@@ -141,12 +113,22 @@ public class Sport extends DataObject { // TODO: Getter und Setter
     public void readFrom(ResultSet rset) throws SQLException {
         id = rset.getInt("id");
         name = rset.getString("Name");
+        sportType_id = rset.getInt("sportType_id");
+        sport_type = SportManager.getInstance().getSportTypeFromID(sportType_id);
+        additionalAttributes = new String[sport_type.getAttributes().length];
+        for(int i = 0; i < additionalAttributes.length; i++){
+            additionalAttributes[i] = rset.getString(i + 3);
+        }
     }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException {
         rset.updateInt("id", id);
         rset.updateString("Name", name);
+        rset.updateInt("sportType_id", sportType_id);
+        for(int i = 0; i < additionalAttributes.length; i++){
+            rset.updateString(i+3, additionalAttributes[i]);
+        }
 
     }
 

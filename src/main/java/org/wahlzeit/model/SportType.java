@@ -57,8 +57,11 @@ public class SportType extends DataObject {
         }
     }
 
+    public Sport createInstance(String sport_name, String[] additionalAttributes) throws SQLException {
+        return new Sport(this, sport_name, additionalAttributes);
+    }
     public Sport createInstance(String sport_name) throws SQLException {
-        return new Sport(this, sport_name);
+        return new Sport(this, sport_name, null);
     }
 
     public int getID() {
