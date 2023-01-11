@@ -81,6 +81,9 @@ public class Sport extends DataObject { // TODO: Getter und Setter
         return this.additionalAttributes;
     }
 
+    public int getSportType_id(){
+        return sportType_id;
+    }
     public void setSpecificAdditionalAttribute(String attribute_name, String value) {
         int index = getIndex(attribute_name);
         additionalAttributes[index] = value;

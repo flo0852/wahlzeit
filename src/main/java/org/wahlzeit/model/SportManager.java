@@ -50,16 +50,22 @@ public class SportManager extends ObjectManager {
         return ++current_id_sport;
     }
 
-    protected Sport getSportFromID(int id) throws SQLException {
+    protected Sport getSportFromID(int id, int sport_type_id) throws SQLException {
         assertIsValidID(id);
         Sport sport_unsaved = unsavedSports.get(id);
         if (sport_unsaved != null) {
             return sport_unsaved;
         }
         Statement st = getStatement();
-        String sqlInquiry = "SELECT * FROM sport WHERE id = ";
-        sqlInquiry = sqlInquiry + String.valueOf(id);
+        String sqlInquiry = "SELECT * FROM sportTypes WHERE id = ";
+        sqlInquiry = sqlInquiry + String.valueOf(sport_type_id);
         ResultSet rs = st.executeQuery(sqlInquiry);
+        rs.absolute(1);
+        String type_name = rs.getString("Name");
+        st = getStatement();
+        sqlInquiry = "SELECT * FROM " + type_name + "_sportType WHERE id = ";
+        sqlInquiry = sqlInquiry + String.valueOf(id);
+        rs = st.executeQuery(sqlInquiry);
         rs.absolute(1);
         try {
             Sport sport = new Sport(rs);
@@ -76,18 +82,22 @@ public class SportManager extends ObjectManager {
         Connection con = dbcon.getRdbmsConnection();
         int id = getNextIDSport(con);
         Statement st = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-        ResultSet rs = st.executeQuery("SELECT * FROM sport");
+        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sportType");
         rs.moveToInsertRow();
         rs.updateInt("id", id);
         rs.updateString("name", sport.getName());
+        rs.updateInt("sportType_id", sport.getSportType_id());
+        for(int i = 0; i < sport.getAdditionalAttributes().length; i++){
+            rs.updateString(i+3, sport.getAdditionalAttributes()[i]);
+        }
         rs.insertRow();
         return id;
     }
 
-    protected int tryInsertAgain(Sport sport) throws SQLException { // TODO: auf Sport ändern
+    protected int tryInsertAgain(Sport sport) throws SQLException {
         assertIsNonNullArgument(sport, "Sport Object - tryInsertAgain");
         Statement st = getStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM sport WHERE id = " + current_id_sport);
+        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sportType WHERE id = ");
         if (!rs.next()) {
             return insertData(sport); // nothing was inserted -> try insert again
         } else { // new row has already been inserted
@@ -108,7 +118,7 @@ public class SportManager extends ObjectManager {
             return; // Sport is not in Database so no changes there needed
         }
         try {
-            PreparedStatement stmt = getUpdatingStatement("SELECT * FROM sport WHERE sport = ?");
+            PreparedStatement stmt = getUpdatingStatement("SELECT * FROM " + sport.getType().getName() + "_sportType WHERE id = ");
             updateObject(sport, stmt);
         } catch (SQLException sex) {
             SysLog.logThrowable(sex);
