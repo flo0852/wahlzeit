@@ -32,6 +32,7 @@ public class SportPhoto extends Photo {
     public void readFrom(ResultSet rset) throws SQLException {
         super.readFrom(rset);
         sport = rset.getString("sport");
+
     }
 
     public void writeOn(ResultSet rset) throws SQLException {

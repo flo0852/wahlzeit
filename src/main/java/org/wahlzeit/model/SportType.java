@@ -1,5 +1,6 @@
 package org.wahlzeit.model;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -15,12 +16,12 @@ public class SportType {
         this.name = name;
     }
 
-    public Sport createInstance(String sport_name) {
-        return new Sport(this,name);
+    public Sport createInstance(String sport_name) throws SQLException{
+        return new Sport(this,sport_name);
     }
 
     public Sport createInstance(String sport_name, String[] additionalAttributes, String[] additionalAttributesValues) {
-        return new Sport(this,name, additionalAttributes, additionalAttributesValues);
+        return new Sport(this,sport_name, additionalAttributes, additionalAttributesValues);
     }
 
     public SportType getSuperType() {

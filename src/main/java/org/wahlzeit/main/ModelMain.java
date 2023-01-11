@@ -174,6 +174,7 @@ public abstract class ModelMain extends AbstractMain {
 		PhotoManager.getInstance().savePhotos();			
 		UserManager.getInstance().saveUsers();
 		LocationManager.getInstance().saveAll();
+		SportManager.getInstance().saveAll();
 
 		saveGlobals();
 	}

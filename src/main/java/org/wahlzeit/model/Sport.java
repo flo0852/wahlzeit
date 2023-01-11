@@ -1,32 +1,77 @@
 package org.wahlzeit.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class Sport {
-    private static AtomicInteger id_counter;
-    public final SportType sport_type;
-    public final String name;
+import org.wahlzeit.services.DataObject;
+import org.wahlzeit.services.SysLog;
+
+public class Sport extends DataObject { //TODO: Getter und Setter
+    private int id = -1; //>= 0 := valid ID
+                         //-1 := no ID
+                         //< -1 := provisionally ID -> Inserting in Database failed -> only saved in Cache    private SportType sport_type;
+    private String name;
+    private SportType sport_type;
     private String[] additionalAttributes; // Attribute Names
-    private String[] additionalAttributesValues;  // Attribute Values
+    private String[] additionalAttributesValues; // Attribute Values
 
-    public Sport(SportType st, String name) {
-        this.sport_type = st;
-        this.name = name;
-
+    public Sport(ResultSet rSet) throws SQLException {
+        assertIsNonNullArgument(rSet, "ResultSet Object - Sport Constructor");
+        for (int i = 0; i < 3; i++) {
+            try {
+                readFrom(rSet);
+                return;
+            } catch (SQLException sex) {
+                if (i == 2) {
+                    throw sex;
+                }
+                SysLog.logSysInfo("readFrom at Sport Constructor failed, trying again");
+            }
+        }
     }
 
-    public Sport(SportType st, String name, String[] additionalAttributes,
-            String[] additionalAttributesValues) {
-        assertIsNonNullArgument(st, "SportType - Sport Constructor");
-        assertIsSameLength(additionalAttributes, additionalAttributesValues);
+    public Sport(SportType st, String name) {
+        assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
+        assertIsNonNullArgument(name, "String Obect - Sport Constructor");
         this.sport_type = st;
         this.name = name;
-        this.additionalAttributes = additionalAttributes;
-        this.additionalAttributesValues = additionalAttributesValues;
+
+        try {
+            id = SportManager.getInstance().insertData(this); // 1. Try
+        } catch (SQLException sql_e1) {
+            try {
+                SysLog.logSysInfo("insertData at Sport Constructor failed, trying again");
+                id = SportManager.getInstance().tryInsertAgain(this); // 2. Try
+            } catch (SQLException sql_e2) {
+                SysLog.logSysInfo("insertData at Sport Constructor finally failed, adding in Sport Cache");
+                id = SportManager.getInstance().alternativeSave(this);
+            }
+        }
+    }
+
+    public Sport(SportType st, String name, String[] additionalAttributes, //TODO: Additional Attributes in Database
+            String[] additionalAttributesValues) {
+                assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
+                assertIsNonNullArgument(name, "String Obect - Sport Constructor");
+                this.sport_type = st;
+                this.name = name;
+        
+                try {
+                    id = SportManager.getInstance().insertData(this); // 1. Try
+                } catch (SQLException sql_e1) {
+                    try {
+                        SysLog.logSysInfo("insertData at Sport Constructor failed, trying again");
+                        id = SportManager.getInstance().tryInsertAgain(this); // 2. Try
+                    } catch (SQLException sql_e2) {
+                        SysLog.logSysInfo("insertData at Sport Constructor finally failed, adding in Sport Cache");
+                        id = SportManager.getInstance().alternativeSave(this);
+                    }
+                }
     }
 
     public int getID() {
-        return id_counter.incrementAndGet();
+        return id;
     }
 
     public SportType getType() {
@@ -79,6 +124,37 @@ public class Sport {
         throw new IllegalArgumentException(attribute_name + " is not a valid attribute name");
     }
 
+    @Override
+    public String getIdAsString() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public void readFrom(ResultSet rset) throws SQLException {
+
+    }
+
+    @Override
+    public void writeOn(ResultSet rset) throws SQLException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeId(PreparedStatement stmt, int pos) throws SQLException {
+        stmt.setInt(pos, id);
+
+    }
+
+    protected void setDatabaseID(int positive_id){
+        if(id < -1){
+            id = positive_id;
+        }
+        else{ //IDs from sports which are already in the database mustn't be changed
+            throw new IllegalAccessError("Changes on IDs of sports which are already in the Database are strictly forbidden");
+        }
+    }
+
     protected void assertIsNonNullArgument(Object arg, String label) {
         if (arg == null) {
             throw new IllegalArgumentException(label + " should not be null");
@@ -90,4 +166,5 @@ public class Sport {
             throw new IllegalArgumentException("Array lengths should be the same");
         }
     }
+
 }
