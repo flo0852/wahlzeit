@@ -7,10 +7,11 @@ import java.sql.SQLException;
 import org.wahlzeit.services.DataObject;
 import org.wahlzeit.services.SysLog;
 
-public class Sport extends DataObject { //TODO: Getter und Setter
-    private int id = -1; //>= 0 := valid ID
-                         //-1 := no ID
-                         //< -1 := provisionally ID -> Inserting in Database failed -> only saved in Cache    private SportType sport_type;
+public class Sport extends DataObject { // TODO: Getter und Setter
+    private int id = -1; // >= 0 := valid ID
+                         // -1 := no ID
+                         // < -1 := provisionally ID -> Inserting in Database failed -> only saved in
+                         // Cache private SportType sport_type;
     private String name;
     private SportType sport_type;
     private String[] additionalAttributes; // Attribute Names
@@ -50,24 +51,24 @@ public class Sport extends DataObject { //TODO: Getter und Setter
         }
     }
 
-    public Sport(SportType st, String name, String[] additionalAttributes, //TODO: Additional Attributes in Database
+    public Sport(SportType st, String name, String[] additionalAttributes, // TODO: Additional Attributes in Database
             String[] additionalAttributesValues) {
-                assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
-                assertIsNonNullArgument(name, "String Obect - Sport Constructor");
-                this.sport_type = st;
-                this.name = name;
-        
-                try {
-                    id = SportManager.getInstance().insertData(this); // 1. Try
-                } catch (SQLException sql_e1) {
-                    try {
-                        SysLog.logSysInfo("insertData at Sport Constructor failed, trying again");
-                        id = SportManager.getInstance().tryInsertAgain(this); // 2. Try
-                    } catch (SQLException sql_e2) {
-                        SysLog.logSysInfo("insertData at Sport Constructor finally failed, adding in Sport Cache");
-                        id = SportManager.getInstance().alternativeSave(this);
-                    }
-                }
+        assertIsNonNullArgument(st, "SportType Obect - Sport Constructor");
+        assertIsNonNullArgument(name, "String Obect - Sport Constructor");
+        this.sport_type = st;
+        this.name = name;
+
+        try {
+            id = SportManager.getInstance().insertData(this); // 1. Try
+        } catch (SQLException sql_e1) {
+            try {
+                SysLog.logSysInfo("insertData at Sport Constructor failed, trying again");
+                id = SportManager.getInstance().tryInsertAgain(this); // 2. Try
+            } catch (SQLException sql_e2) {
+                SysLog.logSysInfo("insertData at Sport Constructor finally failed, adding in Sport Cache");
+                id = SportManager.getInstance().alternativeSave(this);
+            }
+        }
     }
 
     public int getID() {
@@ -76,6 +77,13 @@ public class Sport extends DataObject { //TODO: Getter und Setter
 
     public SportType getType() {
         return sport_type;
+    }
+
+    public void setType(SportType sportType) {
+        assertIsNonNullArgument(sportType, "sportType - setType");
+        this.sport_type = sportType;
+        incWriteCount();
+        SportManager.getInstance().update(this);
     }
 
     public String getName() {
@@ -131,12 +139,14 @@ public class Sport extends DataObject { //TODO: Getter und Setter
 
     @Override
     public void readFrom(ResultSet rset) throws SQLException {
-
+        id = rset.getInt("id");
+        name = rset.getString("Name");
     }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException {
-        // TODO Auto-generated method stub
+        rset.updateInt("id", id);
+        rset.updateString("Name", name);
 
     }
 
@@ -146,12 +156,12 @@ public class Sport extends DataObject { //TODO: Getter und Setter
 
     }
 
-    protected void setDatabaseID(int positive_id){
-        if(id < -1){
+    protected void setDatabaseID(int positive_id) {
+        if (id < -1) {
             id = positive_id;
-        }
-        else{ //IDs from sports which are already in the database mustn't be changed
-            throw new IllegalAccessError("Changes on IDs of sports which are already in the Database are strictly forbidden");
+        } else { // IDs from sports which are already in the database mustn't be changed
+            throw new IllegalAccessError(
+                    "Changes on IDs of sports which are already in the Database are strictly forbidden");
         }
     }
 
