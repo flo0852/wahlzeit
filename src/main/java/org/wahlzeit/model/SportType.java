@@ -33,7 +33,8 @@ public class SportType extends DataObject {
         }
     }
 
-    public SportType(SportType superType, String name, String[] attributes) {
+    public SportType(SportType superType, String name, String[] attributes) throws SQLException {
+        SportManager.getInstance().assertOnlyAllowedChars(attributes);
         SportManager.getInstance().assertNoDuplicate(name);
         this.superType = superType;
         this.name = name;
@@ -60,6 +61,7 @@ public class SportType extends DataObject {
     public Sport createInstance(String sport_name, String[] additionalAttributes) throws SQLException {
         return new Sport(this, sport_name, additionalAttributes);
     }
+
     public Sport createInstance(String sport_name) throws SQLException {
         return new Sport(this, sport_name, null);
     }
@@ -81,6 +83,9 @@ public class SportType extends DataObject {
     }
 
     public String getAttributesAsString() {
+        if (attributes == null) {
+            return null;
+        }
         String res = "";
         for (String attr : attributes) {
             res += attr + "_";
@@ -89,6 +94,9 @@ public class SportType extends DataObject {
     }
 
     public String getSubtypesAsString() {
+        if (subTypes.size() == 0) {
+            return null;
+        }
         String res = "";
         for (SportType subt : subTypes) {
             res += subt.getIdAsString() + "_";
@@ -97,6 +105,9 @@ public class SportType extends DataObject {
     }
 
     private String[] StringToArray(String text) {
+        if (text == null) {
+            return null;
+        }
         int word_counter = 0;
         char[] textArray = text.toCharArray();
         for (int i = 0; i < text.length(); i++) {
@@ -120,6 +131,9 @@ public class SportType extends DataObject {
     }
 
     private int[] stringArrayToIntArray(String[] array) {
+        if (array == null) {
+            return null;
+        }
         int[] res = new int[array.length];
         for (int i = 0; i < array.length; i++) {
             res[i] = Integer.parseInt(array[i]);
@@ -131,7 +145,7 @@ public class SportType extends DataObject {
         return subTypes.iterator();
     }
 
-    public void newSubType(String name, String[] subtype_attributes) {
+    public void newSubType(String name, String[] subtype_attributes) throws SQLException {
         SportManager.getInstance().assertNoDuplicate(name);
         SportType newSubType = new SportType(this, name, subtype_attributes);
         subTypes.add(newSubType);
@@ -168,7 +182,7 @@ public class SportType extends DataObject {
         return hasSportType(subType.name) != null;
     }
 
-    public void changeSuperType(SportType newSuperType) {
+    public void changeSuperType(SportType newSuperType) throws SQLException {
         assertExistingSportType(newSuperType);
         if (superType == null) {
             SportManager.getInstance().removeRoot(newSuperType);
@@ -195,8 +209,10 @@ public class SportType extends DataObject {
         attributes = StringToArray(rset.getString("attributes"));
         String[] subtypes_ids = StringToArray(rset.getString("attributes"));
         int[] subtype_ids = stringArrayToIntArray(subtypes_ids);
-        for (int i = 0; i < subtypes_ids.length; i++) {
-            subTypes.add(SportManager.getInstance().getSportTypeFromID(subtype_ids[i]));
+        if (subtype_ids != null) {
+            for (int i = 0; i < subtypes_ids.length; i++) {
+                subTypes.add(SportManager.getInstance().getSportTypeFromID(subtype_ids[i]));
+            }
         }
     }
 
@@ -214,9 +230,9 @@ public class SportType extends DataObject {
         stmt.setInt(pos, id);
     }
 
-    private void assertExistingSportType(SportType type) {
+    private void assertExistingSportType(SportType type) throws SQLException {
         assertIsNonNullArgument(type, "SportType - assertExistingSportType()");
-        if (SportManager.getInstance().searchSportType(type.name) == null) {
+        if (SportManager.getInstance().getSportTypeFromName(type.name) == null) {
             throw new IllegalArgumentException("SportType - assertExistingSportType() should exist");
         }
     }

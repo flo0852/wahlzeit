@@ -21,6 +21,7 @@ import org.wahlzeit.services.SysConfig;
 public class SportTypeTest{
 
     private static Sport test_sport1;
+    private static SportType test_sportType1;
     private static SportManager sportManager_instance;
 
 
@@ -40,29 +41,35 @@ public class SportTypeTest{
 
     @Test
     public void testSportDatabaseBehaviour() throws SQLException{
-        test_sport1 = sportManager_instance.createSport("Ballsport", "Fussball");
+        test_sportType1 = sportManager_instance.createSportType("Ballsporttest");
+        int sportType_id = test_sportType1.getID();
+        test_sport1 = sportManager_instance.createSport("Ballsporttest", "Fussball");
         int sport_id = test_sport1.getID();
+
         Statement st = sportManager_instance.getStatement();
-        String sqlQuery = "SELECT * FROM sport WHERE id = " + sport_id;
+        String sqlQuery = "SELECT * FROM sporttypes WHERE id = " + sportType_id;
         ResultSet rs = st.executeQuery(sqlQuery);
         if (!rs.next()) {
             fail();
         }
-        String name = rs.getString("Name");
-        assertEquals("Fussball", name);
+        String st_name = rs.getString("name");
+        assertEquals("Ballsporttest", st_name);
 
 
     }
 
     @AfterClass
     public static void clean() throws SQLException {
-        deleteSport(test_sport1.getID());
+        deleteSportType(test_sportType1);
 
     }
 
-    public static void deleteSport(int id) throws SQLException {
-        Statement st = SportManager.getInstance().getStatement();
-        String sqlQuery = "Delete From sport WHERE id = " + id;
+    public static void deleteSportType(SportType sty) throws SQLException {
+        Statement st = sportManager_instance.getStatement();
+        String sqlQuery = "DROP TABLE " +  sty.getName() + "_sporttype";
+        st.execute(sqlQuery);
+        st = sportManager_instance.getStatement();
+        sqlQuery = "DELETE FROM sporttypes WHERE id = " + sty.getID();
         st.execute(sqlQuery);
     }
 }
