@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.wahlzeit.services.DataObject;
 import org.wahlzeit.services.SysLog;
 
-public class Sport extends DataObject { // TODO: Getter und Setter
+public class Sport extends DataObject {
     private int id = -1; // >= 0 := valid ID
                          // -1 := no ID
                          // < -1 := provisionally ID -> Inserting in Database failed -> only saved in
@@ -84,9 +84,18 @@ public class Sport extends DataObject { // TODO: Getter und Setter
     public int getSportType_id(){
         return sportType_id;
     }
+
+    public void setName(String name){
+        this.name = name;
+        incWriteCount();
+        SportManager.getInstance().update(this);
+    }
+
     public void setSpecificAdditionalAttribute(String attribute_name, String value) {
         int index = getIndex(attribute_name);
         additionalAttributes[index] = value;
+        incWriteCount();
+        SportManager.getInstance().update(this);
     }
 
     public void setSpecificAdditionalAttribute(int index, String value) {
@@ -95,6 +104,8 @@ public class Sport extends DataObject { // TODO: Getter und Setter
         } else {
             additionalAttributes[index] = value;
         }
+        incWriteCount();
+        SportManager.getInstance().update(this);
     }
 
     private int getIndex(String attribute_name) {
@@ -120,7 +131,7 @@ public class Sport extends DataObject { // TODO: Getter und Setter
         sport_type = SportManager.getInstance().getSportTypeFromID(sportType_id);
         additionalAttributes = new String[sport_type.getAttributes().length];
         for(int i = 0; i < additionalAttributes.length; i++){
-            additionalAttributes[i] = rset.getString(i + 3);
+            additionalAttributes[i] = rset.getString(i + 4);
         }
     }
 

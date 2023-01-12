@@ -1,6 +1,7 @@
 package org.wahlzeit.model;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -90,7 +91,7 @@ public class SportManager extends ObjectManager {
     }
 
     // Insert new Row in Sport
-    protected int insertData(Sport sport) throws SQLException { // TODO: weitere Attribute einfuegen
+    protected int insertData(Sport sport) throws SQLException {
         assertIsNonNullArgument(sport, "Sport Object - insertData");
         DatabaseConnection dbcon = getDatabaseConnection();
         Connection con = dbcon.getRdbmsConnection();
@@ -187,9 +188,13 @@ public class SportManager extends ObjectManager {
     }
 
     @Override
-    protected Persistent createObject(ResultSet rset) throws SQLException { // TODO: checken ob Sport oder SportType
-                                                                            // gemeint
-        return new Sport(rset);
+    protected Persistent createObject(ResultSet rset) throws SQLException {
+        ResultSetMetaData rsmeta = rset.getMetaData();
+        if (rsmeta.getColumnName(3) == "sportType_id") {
+
+            return new Sport(rset);
+        }
+        return new SportType(rset);
     }
 
     // For SportType Objects
