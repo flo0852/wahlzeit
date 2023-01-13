@@ -14,7 +14,7 @@ public class Sport extends DataObject {
                          // Cache private SportType sport_type;
     private String name;
     private SportType sport_type;
-    private int sportType_id;
+    private int sportType_id = 0;
     private String[] additionalAttributes;
 
     public Sport(ResultSet rSet) throws SQLException {
@@ -24,6 +24,7 @@ public class Sport extends DataObject {
                 readFrom(rSet);
                 return;
             } catch (SQLException sex) {
+                sex.printStackTrace();
                 if (i == 2) {
                     throw sex;
                 }
@@ -61,6 +62,10 @@ public class Sport extends DataObject {
         return sport_type;
     }
 
+    public int getSportType_id() {
+        return sportType_id;
+    }
+
     public String getName() {
         return name;
     }
@@ -81,11 +86,8 @@ public class Sport extends DataObject {
         return this.additionalAttributes;
     }
 
-    public int getSportType_id(){
-        return sportType_id;
-    }
-
-    public void setName(String name){
+    public void setName(String name) {
+        assertIsNonNullArgument(name, "Name - setName() - Sport");
         this.name = name;
         incWriteCount();
         SportManager.getInstance().update(this);
@@ -124,14 +126,16 @@ public class Sport extends DataObject {
     }
 
     @Override
-    public void readFrom(ResultSet rset) throws SQLException {
+    public void readFrom(ResultSet rset) throws SQLException{
         id = rset.getInt("id");
         name = rset.getString("Name");
         sportType_id = rset.getInt("sportType_id");
         sport_type = SportManager.getInstance().getSportTypeFromID(sportType_id);
-        additionalAttributes = new String[sport_type.getAttributes().length];
-        for(int i = 0; i < additionalAttributes.length; i++){
-            additionalAttributes[i] = rset.getString(i + 4);
+        if (sport_type.getAttributes() != null) {
+            additionalAttributes = new String[sport_type.getAttributes().length];
+            for (int i = 0; i < additionalAttributes.length; i++) {
+                additionalAttributes[i] = rset.getString(i + 4);
+            }
         }
     }
 
@@ -140,8 +144,10 @@ public class Sport extends DataObject {
         rset.updateInt("id", id);
         rset.updateString("Name", name);
         rset.updateInt("sportType_id", sportType_id);
-        for(int i = 0; i < additionalAttributes.length; i++){
-            rset.updateString(i+3, additionalAttributes[i]);
+        if (additionalAttributes != null) {
+            for (int i = 0; i < additionalAttributes.length; i++) {
+                rset.updateString(i + 3, additionalAttributes[i]);
+            }
         }
 
     }

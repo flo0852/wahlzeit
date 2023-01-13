@@ -14,9 +14,10 @@ public class SportType extends DataObject {
 
     private int id;
     private SportType superType;
+    private int superType_id;
     private String name;
     private String[] attributes;
-    private Set<SportType> subTypes = new HashSet<SportType>();
+    private Set<Integer> subTypes = new HashSet<Integer>();
 
     public SportType(ResultSet rSet) throws SQLException {
         assertIsNonNullArgument(rSet, "ResultSet Object - SportType Constructor");
@@ -25,10 +26,11 @@ public class SportType extends DataObject {
                 readFrom(rSet);
                 return;
             } catch (SQLException sex) {
+                sex.printStackTrace();
                 if (i == 2) {
                     throw sex;
                 }
-                SysLog.logSysInfo("readFrom at Sport Constructor failed, trying again");
+                SysLog.logSysInfo("readFrom at SportType Constructor failed, trying again");
             }
         }
     }
@@ -37,6 +39,9 @@ public class SportType extends DataObject {
         SportManager.getInstance().assertOnlyAllowedChars(attributes);
         SportManager.getInstance().assertNoDuplicate(name);
         this.superType = superType;
+        if (superType != null) {
+            this.superType_id = superType.getID();
+        }
         this.name = name;
         this.attributes = attributes;
         // in datenbank einfuegen
@@ -54,7 +59,13 @@ public class SportType extends DataObject {
         try {
             SportManager.getInstance().createNewSportTypeTable(this);
         } catch (SQLException sql_e1) {
+            sql_e1.printStackTrace();
             SysLog.logSysInfo("CREATE TABLE at SportType Constructor failed");
+        }
+        if (superType != null) {
+            superType.subTypes.add(this.id);
+            superType.incWriteCount();
+            SportManager.getInstance().update(superType);
         }
     }
 
@@ -70,16 +81,27 @@ public class SportType extends DataObject {
         return id;
     }
 
-    public SportType getSuperType() {
-        return superType;
+    public SportType getSuperType() throws SQLException {
+        if (superType != null) {
+            return superType;
+        }
+        return SportManager.getInstance().getSportTypeFromID(superType_id);
     }
 
-    public String[] getAttributes() {
-        return attributes;
+    public int getSuperTypeID() {
+        return superType_id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getTableName() {
+        return name + "_sporttypes";
+    }
+
+    public String[] getAttributes() {
+        return attributes;
     }
 
     public String getAttributesAsString() {
@@ -98,8 +120,8 @@ public class SportType extends DataObject {
             return null;
         }
         String res = "";
-        for (SportType subt : subTypes) {
-            res += subt.getIdAsString() + "_";
+        for (int subt_id : subTypes) {
+            res += Integer.toString(subt_id, 10) + "_";
         }
         return res;
     }
@@ -141,35 +163,35 @@ public class SportType extends DataObject {
         return res;
     }
 
-    public Iterator<SportType> getSubTypeIterator() {
+    public Iterator<Integer> getSubTypeIterator() {
         return subTypes.iterator();
     }
 
     public void newSubType(String name, String[] subtype_attributes) throws SQLException {
         SportManager.getInstance().assertNoDuplicate(name);
         SportType newSubType = new SportType(this, name, subtype_attributes);
-        subTypes.add(newSubType);
+        subTypes.add(newSubType.id);
     }
 
-    public boolean hasInstance(Sport sport) {
+    public boolean hasInstance(Sport sport) throws SQLException {
         assert (sport != null) : "asked about null object";
         if (sport.getType() == this) {
             return true;
         }
-        for (SportType type : subTypes) {
-            if (type.hasInstance(sport)) {
+        for (int type_id : subTypes) {
+            if (SportManager.getInstance().getSportTypeFromID(type_id).hasInstance(sport)) {
                 return true;
             }
         }
         return false;
     }
 
-    public SportType hasSportType(String typename) {
+    public SportType hasSportType(String typename) throws SQLException {
         if (this.name == typename) {
             return this;
         }
-        for (SportType type : subTypes) {
-            SportType result = type.hasSportType(typename);
+        for (int type_id : subTypes) {
+            SportType result = SportManager.getInstance().getSportTypeFromID(type_id).hasSportType(typename);
             if (result != null) {
                 return result;
             }
@@ -177,7 +199,7 @@ public class SportType extends DataObject {
         return null;
     }
 
-    public boolean isSubtype(SportType subType) {
+    public boolean isSubtype(SportType subType) throws SQLException {
         assertIsNonNullArgument("sub", "SportType - isSubtype()");
         return hasSportType(subType.name) != null;
     }
@@ -207,11 +229,11 @@ public class SportType extends DataObject {
         name = rset.getString("Name");
         superType = SportManager.getInstance().getSportTypeFromID(rset.getInt("superType"));
         attributes = StringToArray(rset.getString("attributes"));
-        String[] subtypes_ids = StringToArray(rset.getString("attributes"));
+        String[] subtypes_ids = StringToArray(rset.getString("subtypes"));
         int[] subtype_ids = stringArrayToIntArray(subtypes_ids);
         if (subtype_ids != null) {
             for (int i = 0; i < subtypes_ids.length; i++) {
-                subTypes.add(SportManager.getInstance().getSportTypeFromID(subtype_ids[i]));
+                subTypes.add(subtype_ids[i]);
             }
         }
     }
@@ -222,7 +244,9 @@ public class SportType extends DataObject {
         rset.updateString("Name", name);
         rset.updateString("attributes", getAttributesAsString());
         rset.updateString("subtypes", getSubtypesAsString());
-        rset.updateInt("superType", superType.getID());
+        if (superType != null) {
+            rset.updateInt("superType", superType_id);
+        }
     }
 
     @Override

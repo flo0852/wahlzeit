@@ -17,8 +17,9 @@ import org.wahlzeit.services.SysLog;
 public class SportManager extends ObjectManager {
     private static final SportManager instance = new SportManager();
 
+    private SportType sonstige;
+
     private Set<SportType> rootTypes = new HashSet<SportType>();
-    private Map<Integer, Sport> sports = new HashMap<Integer, Sport>();
 
     protected Map<Integer, Sport> unsavedSports = new HashMap<Integer, Sport>();
 
@@ -53,7 +54,7 @@ public class SportManager extends ObjectManager {
             int a = 0;
             ResultSet rs2;
             for (String table : tables) {
-                rs2 = st.executeQuery("SELECT MAX(id) FROM " + table + "_sportType");
+                rs2 = st.executeQuery("SELECT MAX(id) FROM " + table + "_sporttypes");
                 if (rs2.next()) {
                     a = rs2.getInt(1);
                     if (a > current_id_sport) {
@@ -66,7 +67,8 @@ public class SportManager extends ObjectManager {
     }
 
     protected Sport getSportFromID(int id, int sport_type_id) throws SQLException {
-        assertIsValidID(id);
+        assertIsValidSportID(id);
+        assertIsValidSportTypeID(sport_type_id);
         Sport sport_unsaved = unsavedSports.get(id);
         if (sport_unsaved != null) {
             return sport_unsaved;
@@ -78,7 +80,7 @@ public class SportManager extends ObjectManager {
         rs.absolute(1);
         String type_name = rs.getString("Name");
         st = getStatement();
-        sqlInquiry = "SELECT * FROM " + type_name + "_sportType WHERE id = ";
+        sqlInquiry = "SELECT * FROM " + type_name + "_sporttypes WHERE id = ";
         sqlInquiry = sqlInquiry + String.valueOf(id);
         rs = st.executeQuery(sqlInquiry);
         rs.absolute(1);
@@ -97,15 +99,15 @@ public class SportManager extends ObjectManager {
         Connection con = dbcon.getRdbmsConnection();
         int id = getNextIDSport(con);
         Statement st = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sportType");
+        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sporttypes");
         rs.moveToInsertRow();
         rs.updateInt("id", id);
         rs.updateString("name", sport.getName());
-        rs.updateInt("sportType_id", sport.getSportType_id());
+        rs.updateInt("sportType_id", sport.getType().getID());
         String[] attr = sport.getAdditionalAttributes();
         if (attr != null) {
             for (int i = 0; i < attr.length; i++) {
-                rs.updateString(i + 3, attr[i]);
+                rs.updateString(i + 4, attr[i]);
             }
         }
         rs.insertRow();
@@ -115,7 +117,7 @@ public class SportManager extends ObjectManager {
     protected int tryInsertAgain(Sport sport) throws SQLException {
         assertIsNonNullArgument(sport, "Sport Object - tryInsertAgain");
         Statement st = getStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sportType WHERE id = ");
+        ResultSet rs = st.executeQuery("SELECT * FROM " + sport.getType().getName() + "_sporttypes WHERE id = ");
         if (!rs.next()) {
             return insertData(sport); // nothing was inserted -> try insert again
         } else { // new row has already been inserted
@@ -126,7 +128,7 @@ public class SportManager extends ObjectManager {
     protected void update(Sport sport) {
         assertIsNonNullArgument(sport, "Sport Object - Update");
         int id = sport.getID();
-        assertIsValidID(id);
+        assertIsValidSportID(id);
         if (id < -1) {
             Sport sport_unsaved = unsavedSports.get(id);
             if (sport_unsaved == null) { // should never happen
@@ -137,11 +139,20 @@ public class SportManager extends ObjectManager {
         }
         try {
             PreparedStatement stmt = getUpdatingStatement(
-                    "SELECT * FROM " + sport.getType().getName() + "_sportType WHERE id = ");
+                    "SELECT * FROM " + sport.getType().getName() + "_sporttypes WHERE id = ?");
             updateObject(sport, stmt);
         } catch (SQLException sex) {
             SysLog.logThrowable(sex);
         }
+    }
+
+    public Sport createSport(String typename, String sport_name, String[] attributes) throws SQLException {
+        SportType st = getSportTypeFromName(typename);
+        if (st == null) {
+            throw new IllegalArgumentException("Sporttype: " + typename + " doesn't exist");
+        }
+        Sport sp = st.createInstance(sport_name, attributes);
+        return sp;
     }
 
     public Sport createSport(String typename, String sport_name) throws SQLException {
@@ -150,12 +161,14 @@ public class SportManager extends ObjectManager {
             throw new IllegalArgumentException("Sporttype: " + typename + " doesn't exist");
         }
         Sport sp = st.createInstance(sport_name);
-        sports.put(sp.getID(), sp);
         return sp;
     }
 
     public Sport createSport(String sport_name) throws SQLException {
-        return createSport(null, sport_name);
+        if (sonstige == null) {
+            sonstige = getSportTypeFromName("Sonstige");
+        }
+        return createSport("Sonstige", sport_name);
     }
 
     protected int alternativeSave(Sport sport) {
@@ -221,7 +234,9 @@ public class SportManager extends ObjectManager {
         String sqlInquiry = "SELECT * FROM sporttypes WHERE id = ";
         sqlInquiry = sqlInquiry + String.valueOf(id);
         ResultSet rs = st.executeQuery(sqlInquiry);
-        rs.absolute(1);
+        if(!rs.next()){
+            throw new IllegalArgumentException("No sportType with id: " + id + " found");
+        }
         try {
             SportType sportType = new SportType(rs);
             return sportType;
@@ -236,7 +251,9 @@ public class SportManager extends ObjectManager {
         String sqlInquiry = "SELECT * FROM sporttypes WHERE name = '";
         sqlInquiry = sqlInquiry + name + "'";
         ResultSet rs = st.executeQuery(sqlInquiry);
-        rs.absolute(1);
+        if(!rs.next()){
+            throw new IllegalArgumentException("No sportType with Name: " + name + " found");
+        }
         try {
             SportType sportType = new SportType(rs);
             return sportType;
@@ -301,27 +318,46 @@ public class SportManager extends ObjectManager {
         return createSportType(typename, null, null);
     }
 
+    protected void update(SportType sportType) {
+        assertIsNonNullArgument(sportType, "SportType Object - Update");
+        int id = sportType.getID();
+        assertIsValidSportTypeID(id);
+        try {
+            PreparedStatement stmt = getUpdatingStatement(
+                    "SELECT * FROM sporttypes WHERE id = ?");
+            updateObject(sportType, stmt);
+        } catch (SQLException sex) {
+            SysLog.logThrowable(sex);
+        }
+    }
+
     protected void removeRoot(SportType root) {
         rootTypes.remove(root);
     }
 
     protected void createNewSportTypeTable(SportType sportType) throws SQLException {
         Statement stmt = getStatement();
-        String sqlQuery = "CREATE TABLE " + sportType.getName() + "_sportType " + "(id INTEGER not NULL, "
-                + "name TEXT not NULL, " + "sportType_id INTEGER, ";
+        String sqlQuery = "CREATE TABLE " + sportType.getName() + "_sporttypes " + "(id INTEGER not NULL, "
+                + "name TEXT not NULL UNIQUE, " + "sportType_id INTEGER, ";
         String[] attr = sportType.getAttributes();
         if (attr != null) {
             for (int i = 0; i < attr.length; i++) {
                 sqlQuery += attr[i] + " TEXT, ";
             }
         }
-        sqlQuery += "CONSTRAINT uniName UNIQUE(name), " + "PRIMARY KEY (id))";
+        sqlQuery += "PRIMARY KEY (id))";
         stmt.executeUpdate(sqlQuery);
     }
 
-    protected void assertIsValidID(int id) {
+    protected void assertIsValidSportID(int id) {
         if (id == -1 || (id > current_id_sport && current_id_sport != -1)) {
-            throw new IllegalArgumentException(id + " is not a valid ID");
+            throw new IllegalArgumentException(id + " is not a valid Sport ID");
+        }
+    }
+
+    protected void assertIsValidSportTypeID(int id) {
+        if (id < 1 || (id > current_id_sporttypes && current_id_sporttypes != -1)) {
+            throw new IllegalArgumentException(id + " is not a valid SportType ID");
         }
     }
 

@@ -42,6 +42,24 @@ CREATE TABLE photos (
 	sport text
 );
 
+CREATE TABLE sonstige_sporttypes (
+    id integer NOT NULL,
+    name text NOT NULL,
+    sportType_id integer NOT NULL,
+    CONSTRAINT sonstige_sporttypes_id PRIMARY KEY (id),
+    CONSTRAINT sonstige_sporttypes_name UNIQUE (name)
+);
+
+CREATE TABLE sporttypes (
+    id integer NOT NULL,
+    name text NOT NULL,
+    attributes text,
+    subtypes text,
+    superType integer,
+    CONSTRAINT sportTypes_id PRIMARY KEY (id),
+    CONSTRAINT sportTypes_name UNIQUE (name)
+);
+
 CREATE TABLE tags (
 	tag text,
 	photo_id integer
