@@ -166,9 +166,9 @@ public class SportManager extends ObjectManager {
 
     public Sport createSport(String sport_name) throws SQLException {
         if (sonstige == null) {
-            sonstige = getSportTypeFromName("Sonstige");
+            sonstige = getSportTypeFromName("sonstige");
         }
-        return createSport("Sonstige", sport_name);
+        return createSport("sonstige", sport_name);
     }
 
     protected int alternativeSave(Sport sport) {

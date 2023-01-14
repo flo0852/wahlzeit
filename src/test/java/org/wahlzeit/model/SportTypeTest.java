@@ -212,6 +212,29 @@ public class SportTypeTest{
         assertEquals(test_sportType2.getID(), st_get.getID());
     }
 
+    @Test
+    public void testSportDatabaseBehaviourSonstige() throws SQLException{
+        //Test new SportType table and inserting into it
+        Sport test_sport1 = sportManager_instance.createSport( "GameSonstigeTest");
+
+        String sport_id = test_sport1.getIdAsString();
+        Statement st = sportManager_instance.getStatement();
+        String sqlQuery = "SELECT * FROM sonstige_sporttypes WHERE id = " + sport_id;
+        ResultSet rs = st.executeQuery(sqlQuery);
+        if (!rs.next()) {
+            fail(sport_id);
+        }
+        String sp_name = rs.getString("name");
+        assertEquals("GameSonstigeTest", sp_name);
+
+        //Test getSportFromID
+        Sport sp_get = sportManager_instance.getSportFromID(test_sport1.getID(), 1);
+        assertEquals(test_sport1.getID(), sp_get.getID());
+
+
+        deleteSport(test_sport1);
+    }
+
     @AfterClass
     public static void clean() throws SQLException {
         deleteSportType(test_sportType1);
@@ -229,4 +252,11 @@ public class SportTypeTest{
         sqlQuery = "DELETE FROM sporttypes WHERE id = " + sty.getID();
         st.execute(sqlQuery);
     }
+
+    public static void deleteSport(Sport sport) throws SQLException{
+        Statement st = SportManager.getInstance().getStatement();
+        String sqlQuery = "Delete From " + sport.getType().getName() + "_sporttypes WHERE id = " + sport.getID();
+        st.execute(sqlQuery);
+    }
+    
 }
