@@ -215,7 +215,7 @@ public class SportType extends DataObject {
     }
 
     private void removeSubType(SportType type) {
-        subTypes.remove(type);
+        subTypes.remove(type.getID());
     }
 
     @Override
